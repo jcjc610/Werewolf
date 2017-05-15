@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<strings>
+	<language name="Ludwig" base="Ludwig" variant="Normal" owner="Olgabrezel" />
+	<string key="PlayerStartedGame">
+		<value>Don't u dare to /join just because {0} wants you to! </value>
+	</string>
+	<string key="MinuteLeftToJoin">
+		<value>ONLY ONE MORE MINUTE! IF YOU DON'T JOIN, LUDWIG IS GONNA PERMBAN YOU!</value>
+	</string>
+</strings>
