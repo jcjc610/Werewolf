@@ -42,8 +42,8 @@ namespace Werewolf_Node
         internal static int DupGamesKilled = 0;
         internal static int TotalPlayers = 0;
         internal static string APIToken;
-        internal static string LanguageDirectory => Path.GetFullPath(Path.Combine(Directory.GetParent(RootDirectory).Parent.FullName, @"Languages"));
-        internal static string TempLanguageDirectory => Path.GetFullPath(Path.Combine(Directory.GetParent(RootDirectory).Parent.FullName, @"TempLanguageFiles"));
+        internal static string LanguageDirectory => Path.GetFullPath(Path.Combine(Directory.GetParent(RootDirectory).FullName, @"Languages"));
+        internal static string TempLanguageDirectory => Path.GetFullPath(Path.Combine(Directory.GetParent(RootDirectory).FullName, @"TempLanguageFiles"));
         internal static XDocument English;
         internal static int MessagesSent = 0;
         static void Main(string[] args)

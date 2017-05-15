@@ -298,7 +298,7 @@ namespace Werewolf_Control
                     _writingInfo = false;
 
 
-#if !DEBUG
+#if TRUE
                     //now, let's manage our nodes.
                     if (Nodes.All(x => x.Games.Count <= Settings.ShutDownNodesAt & !x.ShuttingDown) && Nodes.Count > 1)
                     {
