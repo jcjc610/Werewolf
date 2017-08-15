@@ -56,7 +56,7 @@ namespace Telegram.Bot
         }
         protected virtual void OnStatusChanged(StatusChangeEventArgs e)
         {
-            StatusChanged?.Invoke(this, e);
+            // StatusChanged?.Invoke(this, e);
         }
 
         protected virtual void OnUpdateReceived(UpdateEventArgs e)
@@ -271,7 +271,7 @@ namespace Telegram.Bot
                 catch (Exception e)
                 {
                     sw.Stop();
-                    SetStatus(Status.Error);
+                    // SetStatus(Status.Error);
                     //well.  bad things happened.  ignore it this time I guess? At least until I can figure out what the error actually is
                     while (e.InnerException != null)
                         e = e.InnerException;

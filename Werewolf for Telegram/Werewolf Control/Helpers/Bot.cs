@@ -151,10 +151,10 @@ namespace Werewolf_Control.Helpers
                     4;
 #endif
                     if (id == 4) return;
-                    var b = db.BotStatus.Find(id);
-                    b.BotStatus = statusChangeEventArgs.Status.ToString();
-                    CurrentStatus = b.BotStatus;
-                    db.SaveChanges();
+                    // var b = db.BotStatus.Find(id);
+                    // b.BotStatus = statusChangeEventArgs.Status.ToString();
+                    // CurrentStatus = b.BotStatus;
+                    // db.SaveChanges();
                     
                 }
             }
