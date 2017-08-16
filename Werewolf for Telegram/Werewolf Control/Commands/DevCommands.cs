@@ -87,7 +87,7 @@ namespace Werewolf_Control
         [Attributes.Command(Trigger = "copyfiles", DevOnly = true)]
         public static void CopyFiles(Update u, string[] args)
         {
-            String command = @"/c aws s3 sync s3://werewolf-jeff C:\Werewolf\Update --exclude '*' --include '*.zip' & exit";
+            String command = @"/c aws s3 sync s3://werewolf-jeff C:\Werewolf\Update --exclude * --include *.zip --exclude Update.zip & exit";
             Process.Start("cmd.exe", command);
             Thread.Sleep(1000);
             Bot.Send("Files Copied From S3 to Server. Now Unzipping...", u.Message.Chat.Id);
