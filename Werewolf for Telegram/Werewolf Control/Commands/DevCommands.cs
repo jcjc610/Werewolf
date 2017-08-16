@@ -87,12 +87,9 @@ namespace Werewolf_Control
         [Attributes.Command(Trigger = "copyfiles", DevOnly = true)]
         public static void CopyFiles(Update u, string[] args)
         {
-            String command = @"aws s3 sync s3://werewolf-jeff C:\Werewolf\Update --exclude '*' --include '*.zip'";
-            ProcessStartInfo commands = new ProcessStartInfo("cmd", command);
-            Process process = new Process();
-            process.StartInfo = commands;
-            process.Start();
-            Thread.Sleep(200);
+            String command = @"aws s3 sync s3://werewolf-jeff C:\Werewolf\Update --exclude '*' --include '*.zip' & exit";
+            Process.Start("cmd.exe", command);
+            Thread.Sleep(1000);
             Bot.Send("Files Copied From S3 to Server. Now Unzipping...", u.Message.Chat.Id);
             String controlzip = @"C:\Werewolf\Update\Control.zip";
             String nodezip = @"C:\Werewolf\Update\Node.zip";
@@ -100,6 +97,7 @@ namespace Werewolf_Control
             String nodepath = @"C:\Werewolf\Update\Node";
             System.IO.Compression.ZipFile.ExtractToDirectory(controlzip, controlpath);
             System.IO.Compression.ZipFile.ExtractToDirectory(nodezip, nodepath);
+            Thread.Sleep(500);
             Bot.Send("Files Unzipped. You can now run `/update`.", u.Message.Chat.Id, parseMode: ParseMode.Markdown);
         }
 
