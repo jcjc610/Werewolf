@@ -43,7 +43,7 @@ namespace Updater
 #if RELEASE2
                 while (Process.GetProcessesByName("Werewolf Control 2").Any())
 #else
-                    while (Process.GetProcessesByName("Werewolf Control").Any())
+                while (Process.GetProcessesByName("Werewolf Control").Any())
 #endif
                     {
                         Thread.Sleep(100);
@@ -117,6 +117,8 @@ namespace Updater
                     }
                     Console.WriteLine("Node Update complete. Remember to /replacenodes in order to start them.");
                 }
+                var path = Path.Combine(rootPath, "Control\\werewolf control.exe");
+                Process.Start(path, id);
                 Console.WriteLine("Update complete.");
                 Thread.Sleep(5000);
             }
