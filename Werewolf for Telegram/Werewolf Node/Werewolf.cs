@@ -653,7 +653,13 @@ namespace Werewolf_Node
                     if (Program.R.Next(100) < 50)
                     {
                         //pick a random target
-                        player.Choice = ChooseRandomPlayerId(player, false);
+                        var clumsy = ChooseRandomPlayerId(player, false);
+                        if (clumsy == player.Choice) player.ClumsyCorrectLynchCount++;
+                        player.Choice = clumsy;
+                    }
+                    else
+                    {
+                        player.ClumsyCorrectLynchCount++;
                     }
                 }
 
@@ -1901,7 +1907,10 @@ namespace Werewolf_Node
                         target.HasBeenVoted = true;
                         target.Votes++;
                         if (p.PlayerRole == IRole.Mayor && p.HasUsedAbility) //Mayor counts twice
+                        {
+                            p.MayorLynchAfterRevealCount++;
                             target.Votes++;
+                        }
                         DBAction(p, target, "Lynch");
                     }
                     p.NonVote = 0;
@@ -1970,6 +1979,8 @@ namespace Werewolf_Node
                         lynched.TimeDied = DateTime.Now;
                         if (lynched.PlayerRole == IRole.Seer && GameDay == 1)
                             AddAchievement(lynched, Achievements.LackOfTrust);
+                        if (lynched.PlayerRole == IRole.Prince && lynched.HasUsedAbility)
+                            AddAchievement(lynched, Achievements.SpoiledRichBrat);
                         SendWithQueue(GetLocaleString("LynchKill", lynched.GetName(), DbGroup.ShowRoles == false ? "" : $"{lynched.GetName()} {GetLocaleString("Was")} {GetDescription(lynched.PlayerRole)}"));
                         
                         if (lynched.InLove)
@@ -2169,6 +2180,7 @@ namespace Werewolf_Node
                 p.CurrentQuestion = null;
                 p.Votes = 0;
                 p.DiedLastNight = false;
+                p.BeingVisitedSameNightCount = 0;
                 if (p.Bitten & !p.IsDead)
                 {
                     if (p.PlayerRole == IRole.Mason)
@@ -2189,6 +2201,7 @@ namespace Werewolf_Node
                         var andStr = $" {GetLocaleString("And").Trim()} ";
                         msg += GetLocaleString("WolfTeam", others.Select(x => x.GetName(true)).Aggregate((current, a) => current + andStr + a));
                     }
+                    Players.GetPlayerForRole(IRole.AlphaWolf, false).AlphaConvertCount++;
                     Send(msg, p.Id);
                     
                 }
@@ -2308,12 +2321,15 @@ namespace Werewolf_Node
                 }
                 choices.Add(Players.Where(x => x.Votes > 0).OrderByDescending(x => x.Votes).FirstOrDefault()?.Id ?? 0);
 
+                int eatCount = 0;
+
                 foreach (var choice in choices.Where(x => x != 0 && x != -1))
                 {
                     if (!voteWolves.Any()) break; //if wolf dies from first choice, and was alone...
                     var target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
                     if (target != null)
                     {
+                        target.BeingVisitedSameNightCount++;
                         if (ga?.Choice == target.Id && 
                             !(target.PlayerRole == IRole.Harlot && (target.Choice == 0 || target.Choice == -1))) //doesn't apply to harlot not home
                         {
@@ -2519,6 +2535,11 @@ namespace Werewolf_Node
                                         target.IsDead = true;
                                         target.TimeDied = DateTime.Now;
                                         target.DiedLastNight = true;
+                                        if (target.PlayerRole == IRole.Sorcerer)
+                                        {
+                                            foreach (var w in voteWolves)
+                                                AddAchievement(w, Achievements.NoSorcery);
+                                        }
                                         DBKill(voteWolves, target, KillMthd.Eat);
                                         SendGif(GetLocaleString("WolvesEatYou"),
                                             GetRandomImage(Settings.VillagerDieImages), target.Id);
@@ -2526,12 +2547,20 @@ namespace Werewolf_Node
                                     break;
                             }
                         }
+                        eatCount++;
                     }
                     else
                     {
                         //no choice
                     }
                 }
+                if (eatCount == 2)
+                {
+                    var cub = Players.GetPlayerForRole(IRole.WolfCub, false);
+                    if (cub != null)
+                        AddAchievement(cub, Achievements.IHelped);
+                }
+                eatCount = 0;
             }
             WolfCubKilled = false;
             #endregion
@@ -2545,11 +2574,13 @@ namespace Werewolf_Node
                 var skilled = Players.FirstOrDefault(x => x.Id == sk.Choice && !x.IsDead);
                 if (skilled != null)
                 {
+                    skilled.BeingVisitedSameNightCount++;
                     if (ga?.Choice == skilled.Id)
                     {
                         Send(GetLocaleString("GuardBlockedKiller", skilled.GetName()), sk.Id);
                         skilled.WasSavedLastNight = true;
                         DBKill(sk, skilled, KillMthd.SerialKilled);
+                        skilled.BeingVisitedSameNightCount++;
                     }
                     else
                     {
@@ -2580,6 +2611,7 @@ namespace Werewolf_Node
                 var hunted = Players.FirstOrDefault(x => x.Id == hunter.Choice);
                 if (hunted != null)
                 {
+                    hunted.BeingVisitedSameNightCount++;
                     DBAction(hunter, hunted, "Hunt");
                     if (hunted.PlayerRole == IRole.SerialKiller)
                     {
@@ -2588,6 +2620,7 @@ namespace Werewolf_Node
                         hunter.IsDead = true;
                         hunter.TimeDied = DateTime.Now;
                         hunter.DiedLastNight = true;
+                        hunter.CHHuntedCultCount++;
                         hunter.KilledByRole = IRole.SerialKiller;
                         hunter.DiedByVisitingKiller = true;
                     }
@@ -2640,6 +2673,7 @@ namespace Werewolf_Node
                     var target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
                     if (target != null)
                     {
+                        target.BeingVisitedSameNightCount++;
                         if (!target.IsDead)
                         {
                             var newbie = voteCult.OrderByDescending(x => x.DayCult).First();
@@ -2836,6 +2870,7 @@ namespace Werewolf_Node
                 {
                     if (target != null)
                     {
+                        target.BeingVisitedSameNightCount++;
                         switch (target.PlayerRole)
                         {
                             case IRole.Wolf:
@@ -2986,6 +3021,7 @@ namespace Werewolf_Node
                     //if (save != null)
                     //    DBAction(ga, save, "Guard");
 
+                    save.BeingVisitedSameNightCount++;
                     if (save.WasSavedLastNight)
                     {
                         Send(GetLocaleString("GuardSaved", save.GetName()), ga.Id);
@@ -3016,6 +3052,7 @@ namespace Werewolf_Node
                             //only send if GA survived and wolf wasn't attacked
                             {
                                 Send(GetLocaleString("GuardNoAttack", save.GetName()), ga.Id);
+                                ga.GAGuardWolfCount++;
                             }
                             break;
                         case IRole.SerialKiller:
@@ -3198,10 +3235,15 @@ namespace Werewolf_Node
                 p.DiedLastNight = false;
                 p.Choice = 0;
                 p.Votes = 0;
+                if (p.BeingVisitedSameNightCount >= 3)
+                {
+                    p.BusyNight = true;
+                }
                 if (p.Bitten & !p.IsDead)
                 {
                     Send(GetLocaleString("PlayerBitten"), p.Id);
                 }
+                p.BeingVisitedSameNightCount = 0;
             }
 
         }
@@ -4221,6 +4263,20 @@ namespace Werewolf_Node
                             newAch = newAch | Achievements.CultCon;
                         if (!ach.HasFlag(Achievements.SerialSamaritan) && player.PlayerRole == IRole.SerialKiller && player.SerialKilledWolvesCount >= 3)
                             newAch = newAch | Achievements.SerialSamaritan;
+                        if (!ach.HasFlag(Achievements.CultistTracker) && player.PlayerRole == IRole.CultistHunter && player.CHHuntedCultCount >= 3)
+                            newAch = newAch | Achievements.CultistTracker;
+                        if (!ach.HasFlag(Achievements.ImNotDrunk) && player.PlayerRole == IRole.ClumsyGuy && player.ClumsyCorrectLynchCount >= 3)
+                            newAch = newAch | Achievements.ImNotDrunk;
+                        if (!ach.HasFlag(Achievements.WuffieCult) && player.PlayerRole == IRole.AlphaWolf && player.AlphaConvertCount >= 3)
+                            newAch = newAch | Achievements.WuffieCult;
+                        if (!ach.HasFlag(Achievements.DidYouGuardYourself) && player.PlayerRole == IRole.GuardianAngel && player.GAGuardWolfCount >= 3)
+                            newAch = newAch | Achievements.DidYouGuardYourself;
+                        if (!ach.HasFlag(Achievements.ThreeLittleWolves) && player.PlayerRole == IRole.Sorcerer && Players.GetPlayersForRoles(WolfRoles, true).Count() >= 3)
+                            newAch = newAch | Achievements.ThreeLittleWolves;
+                        if (!ach.HasFlag(Achievements.President) && player.PlayerRole == IRole.Mayor && player.MayorLynchAfterRevealCount >= 3)
+                            newAch = newAch | Achievements.President;
+                        if (!ach.HasFlag(Achievements.ItWasABusyNight) && player.BusyNight)
+                            newAch = newAch | Achievements.ItWasABusyNight;
 
                         //now save
                         p.Achievements = (long)(ach | newAch);
