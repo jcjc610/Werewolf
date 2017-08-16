@@ -399,16 +399,18 @@ namespace Werewolf_Control
             //if (update.Message.Chat.Type != ChatType.Private)
             //    reply += $"[Group Stats](www.tgwerewolf.com/Stats/Group/{update.Message.Chat.Id}) ({update.Message.Chat.Title})\n";
             //reply += $"[Player Stats](www.tgwerewolf.com/Stats/Player/{update.Message.From.Id}) ({update.Message.From.FirstName})";
-
+            var name = u.Message.From.FirstName;
+            var id = u.Message.From.Id;
+            var username = u.Message.From.Username;
             if (u.Message.ReplyToMessage != null)
             {
                 var m = u.Message.ReplyToMessage;
                 while (m.ReplyToMessage != null)
                     m = m.ReplyToMessage;
                 //check for forwarded message
-                var name = m.From.FirstName;
-                var id = m.From.Id;
-                var username = m.From.Username;
+                name = m.From.FirstName;
+                id = m.From.Id;
+                username = m.From.Username;
                 if (m.ForwardFrom != null)
                 {
                     id = m.ForwardFrom.Id;
@@ -430,84 +432,49 @@ namespace Werewolf_Control
                 };
                 var menu = new InlineKeyboardMarkup(buttons.ToArray());
                 */
-                string Content;
-                try
-                {
-                    using (var db = new WWContext())
-                    {
-                        Content = "";
-                        //find the player
-                        var p = db.Players.FirstOrDefault(x => x.TelegramId == id);
-                        if (p == null)
-                        {
-                            //remove the command
-                            throw new Exception("Player has never played a game.");
-                        }
-
-                        var gamesPlayed = p.GamePlayers.Count();
-                        var won = p.GamePlayers.Count(x => x.Won);
-                        var lost = gamesPlayed - won;
-                        var survived = p.GamePlayers.Count(x => x.Survived);
-                        var roleInfo = db.PlayerRoles(u.Id).ToList();
-                        var killed = db.PlayerMostKilled(u.Id).FirstOrDefault();
-                        var killedby = db.PlayerMostKilledBy(u.Id).FirstOrDefault();
-                        var ach = (Achievements)(p.Achievements ?? 0);
-                        var count = ach.GetUniqueFlags().Count();
-
-                        Content = String.IsNullOrWhiteSpace(username)
-                            ? $"{name.FormatHTML()} the {roleInfo.OrderByDescending(x => x.times).FirstOrDefault()?.role ?? "Noob"}"
-                            : $"<a href=\"https://telegram.me/{username}\">{name.FormatHTML()} the {roleInfo.OrderByDescending(x => x.times).FirstOrDefault()?.role ?? "Noob"}</a>";
-                        Content += $"\n{count.Pad()}Achievements Unlocked!\n" +
-                                   $"{won.Pad()}Games won ({won * 100 / gamesPlayed}%)\n" +
-                                   $"{lost.Pad()}Games lost ({lost * 100 / gamesPlayed}%)\n" +
-                                   $"{survived.Pad()}Games survived ({survived * 100 / gamesPlayed}%)\n" +
-                                   $"{gamesPlayed.Pad()}Total Games\n" +
-                                   $"<code>{killed?.times}</code>\ttimes I've gleefully killed {killed?.Name.FormatHTML()}\n" +
-                                   $"<code>{killedby?.times}</code>\ttimes I've been slaughted by {killedby?.Name.FormatHTML()}";
-                    }
-                }
-                catch (Exception e)
-                {
-                    Content = "Unable to load stats: " + e.Message;
-                }
-                Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html);
             }
-            else
+            string Content;
+            try
             {
-
-
-                //change this to buttons
-                var buttons = new List<InlineKeyboardButton[]>
+                using (var db = new WWContext())
                 {
-                    new[]
+                    Content = "";
+                    //find the player
+                    var p = db.Players.FirstOrDefault(x => x.TelegramId == id);
+                    if (p == null)
                     {
-                        new InlineKeyboardButton
-                        {
-                            Text = "Global Stats",
-                            Url = "http://www.tgwerewolf.com/Stats?referrer=stats"
-                        }
+                        //remove the command
+                        throw new Exception("Player has never played a game.");
                     }
-                };
-                if (u.Message.Chat.Type != ChatType.Private)
-                    buttons.Add(new[]
-                    {
-                        new InlineKeyboardButton
-                        {
-                            Text = $"{u.Message.Chat.Title} Stats",
-                            Url = "http://www.tgwerewolf.com/Stats/Group/" + u.Message.Chat.Id + "?referrer=stats"
-                        }
-                    });
-                buttons.Add(new[]
-                {
-                    new InlineKeyboardButton
-                    {
-                        Text = $"{u.Message.From.FirstName} Stats",
-                        Url = "http://www.tgwerewolf.com/Stats/Player/" + u.Message.From.Id + "?referrer=stats"
-                    }
-                });
-                var menu = new InlineKeyboardMarkup(buttons.ToArray());
-                Bot.Api.SendTextMessage(u.Message.Chat.Id, "Stats", replyMarkup: menu);
+
+                    var gamesPlayed = p.GamePlayers.Count();
+                    var won = p.GamePlayers.Count(x => x.Won);
+                    var lost = gamesPlayed - won;
+                    var survived = p.GamePlayers.Count(x => x.Survived);
+                    var roleInfo = db.PlayerRoles(u.Id).ToList();
+                    var killed = db.PlayerMostKilled(u.Id).FirstOrDefault();
+                    var killedby = db.PlayerMostKilledBy(u.Id).FirstOrDefault();
+                    var ach = (Achievements)(p.Achievements ?? 0);
+                    var count = ach.GetUniqueFlags().Count();
+
+                    Content = String.IsNullOrWhiteSpace(username)
+                        ? $"{name.FormatHTML()} the {roleInfo.OrderByDescending(x => x.times).FirstOrDefault()?.role ?? "Noob"}"
+                        : $"<a href=\"https://telegram.me/{username}\">{name.FormatHTML()} the {roleInfo.OrderByDescending(x => x.times).FirstOrDefault()?.role ?? "Noob"}</a>";
+                    Content += $"\n{count.Pad()}Achievements Unlocked!\n" +
+                               $"{won.Pad()}Games won ({won * 100 / gamesPlayed}%)\n" +
+                               $"{lost.Pad()}Games lost ({lost * 100 / gamesPlayed}%)\n" +
+                               $"{survived.Pad()}Games survived ({survived * 100 / gamesPlayed}%)\n" +
+                               $"{gamesPlayed.Pad()}Total Games\n" +
+                               $"<code>{killed?.times}</code>\ttimes I've gleefully killed {killed?.Name.FormatHTML()}\n" +
+                               $"<code>{killedby?.times}</code>\ttimes I've been slaughted by {killedby?.Name.FormatHTML()}";
+                }
             }
+            catch (Exception e)
+            {
+                Content = "Unable to load stats: " + e.Message;
+            }
+            Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html);
+            
         }
     }
 }
