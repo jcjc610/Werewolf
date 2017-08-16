@@ -84,6 +84,18 @@ namespace Werewolf_Control
             Update(u, args);
         }
 
+        [Attributes.Command(Trigger = "copyfiles", DevOnly = true)]
+        public static void CopyFiles(Update u, string[] args)
+        {
+            String command = @"aws s3 sync s3://werewolf-jeff C:\Werewolf\Resources --exclude '*' --include '*.zip'";
+            ProcessStartInfo commands = new ProcessStartInfo("cmd", command);
+            Process process = new Process();
+            process.StartInfo = commands;
+            process.Start();
+            Thread.Sleep(200);
+            Bot.Send("Files Copied From S3 to Server.", u.Message.Chat.Id);
+        }
+
         [Attributes.Command(Trigger = "update", DevOnly = true)]
         public static void Update(Update update, string[] args)
         {
@@ -94,6 +106,7 @@ namespace Werewolf_Control
                 Program.Running = false;
                 Bot.Api.StopReceiving();
                 //Thread.Sleep(500);
+                /*
                 using (var db = new WWContext())
                 {
                     var bot =
@@ -106,9 +119,9 @@ namespace Werewolf_Control
 #elif RELEASE2
                         2;
 #endif
-                    db.BotStatus.Find(bot).BotStatus = "Updating";
+                    // db.BotStatus.Find(bot).BotStatus = "Updating";
                     db.SaveChanges();
-                }
+                }*/
                 Environment.Exit(1);
             }
         }
