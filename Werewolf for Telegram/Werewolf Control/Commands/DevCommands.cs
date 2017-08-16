@@ -87,12 +87,12 @@ namespace Werewolf_Control
         [Attributes.Command(Trigger = "copyfiles", DevOnly = true)]
         public static void CopyFiles(Update u, string[] args)
         {
+            System.IO.File.Delete(@"C:\Werewolf\Update\Control.zip");
+            System.IO.File.Delete(@"C:\Werewolf\Update\Node.zip");
             String command = @"/c aws s3 sync s3://werewolf-jeff C:\Werewolf\Update --exclude * --include *.zip --exclude Update.zip & exit";
             Process.Start("cmd.exe", command);
             Bot.Send("Files Copied From S3 to Server. Now Unzipping...", u.Message.Chat.Id);
-            Thread.Sleep(5000);
-            System.IO.File.Delete(@"C:\Werewolf\Update\Control.zip");
-            System.IO.File.Delete(@"C:\Werewolf\Update\Node.zip");
+            Thread.Sleep(10000);
             System.IO.Directory.Delete(@"C:\Werewolf\Update\Control", true);
             System.IO.Directory.Delete(@"C:\Werewolf\Update\Node", true);
             System.IO.Directory.CreateDirectory(@"C:\Werewolf\Update\Control");
