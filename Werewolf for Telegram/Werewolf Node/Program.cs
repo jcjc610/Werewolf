@@ -38,7 +38,7 @@ namespace Werewolf_Node
         internal static int CommandsReceived = 0;
         internal static int GamesStarted = 0;
         internal static int Para = 106665913;
-        internal static long ErrorGroup = -1001098399855;
+        internal static long ErrorGroup = -1001117997439;
         internal static int DupGamesKilled = 0;
         internal static int TotalPlayers = 0;
         internal static string APIToken;
