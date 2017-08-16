@@ -55,7 +55,7 @@ namespace Werewolf_Control
         [Command(Trigger = "help")]
         public static void Help(Update update, string[] args)
         {
-            Bot.Api.SendTextMessage(update.Message.Chat.Id, "[Website](http://www.tgwerewolf.com/?referrer=help)\n/rolelist (don't forget to /setlang first!)\n[Telegram Werewolf Support Group](http://telegram.me/werewolfsupport)\n[Telegram Werewolf Dev Channel](https://telegram.me/werewolfdev)",
+            Bot.Api.SendTextMessage(update.Message.Chat.Id, "This is a clone of @werewolfbot by @jeffffc.\n[Official Website](http://www.tgwerewolf.com/?referrer=help)\n/rolelist (don't forget to /setlang first!)\n[Telegram Werewolf Support Group](http://telegram.me/greywolfsupport)\n[Telegram Werewolf Dev Channel](https://telegram.me/greywolfdev)",
                                                         parseMode: ParseMode.Markdown);
         }
 
@@ -69,7 +69,7 @@ namespace Werewolf_Control
         [Command(Trigger = "donate")]
         public static void Donate(Update u, string[] args)
         {
-            Bot.Api.SendTextMessage(u.Message.Chat.Id, "Want to help keep werewolf online? Please donate to info@tgwerewolf.com through PayPal.\n\nDonations help us pay to keep the expensive servers running and the game online. Every donation you make helps to keep us going for another month. For more information please contact @werewolfsupport", parseMode: ParseMode.Html);
+            Bot.Api.SendTextMessage(u.Message.Chat.Id, "Please go to @werewolfbot and use <code>/donate</code>.", parseMode: ParseMode.Html);
         }
 
         [Command(Trigger = "changelog")]
@@ -89,6 +89,7 @@ namespace Werewolf_Control
             Bot.Api.SendTextMessage(update.Message.Chat.Id, result, parseMode: ParseMode.Markdown);
         }
 
+        /*
         [Command(Trigger = "getstatus")]
         public static void GetStatus(Update u, string[] args)
         {
@@ -99,7 +100,7 @@ namespace Werewolf_Control
                         .Aggregate((a, b) => a + "\n" + b);
                 Send(msg, u.Message.Chat.Id);
             }
-        }
+        }*/
 
         [Command(Trigger = "version")]
         public static void Version(Update update, string[] args)
@@ -231,14 +232,14 @@ namespace Werewolf_Control
 
                         if (String.IsNullOrEmpty(args[1]))
                         {
-                            var msg = $"Hi there! I'm @{Bot.Me.Username}, and I moderate games of Werewolf." +
-                                      $"\nJoin the main group @werewolfgame, or to find a group to play in, you can use /grouplist." +
+                            var msg = $"Hi there! I'm @{Bot.Me.Username}, a clone of @werewolfbot, and I moderate games of Werewolf." +
+                                      $"\nUse /setlang to set PM language and /config after you added me into a group." +
                                       $"\nFor role information, use /rolelist." +
-                                      $"\nIf you want to set your default language, use /setlang." +
-                                      $"\nBe sure to stop by <a href=\"https://telegram.me/werewolfsupport\">Werewolf Support</a> for any questions, and subscribe to @werewolfdev for updates from the developer." +
+                                      $"\nBe sure to stop by <a href=\"https://telegram.me/greywolfsupport\">Werewolf Support</a> for any questions, and subscribe to @greywolfdev for updates from the developer." +
                                       $"\nMore infomation can be found <a href=\"https://www.tgwerewolf.com/?referrer=start\">here</a>!";
                             Bot.Send(msg,u.Message.Chat.Id);
                         }
+                        /*
                         else
                         {
                             var uid = args[1];
@@ -260,6 +261,7 @@ namespace Werewolf_Control
                                 Send($"Your telegram account is now linked to your web account - {aspuser.Email}", u.Message.From.Id);
                             }
                         }
+                        */
                     }
                 }
             }
@@ -406,11 +408,14 @@ namespace Werewolf_Control
                 //check for forwarded message
                 var name = m.From.FirstName;
                 var id = m.From.Id;
+                var username = m.From.Username;
                 if (m.ForwardFrom != null)
                 {
                     id = m.ForwardFrom.Id;
                     name = m.ForwardFrom.FirstName;
+                    username = m.ForwardFrom.Username;
                 }
+                /*
                 var buttons = new List<InlineKeyboardButton[]>
                 {
                     new[]
@@ -424,7 +429,48 @@ namespace Werewolf_Control
 
                 };
                 var menu = new InlineKeyboardMarkup(buttons.ToArray());
-                Bot.Api.SendTextMessage(u.Message.Chat.Id, "Stats", replyMarkup: menu);
+                */
+                string Content;
+                try
+                {
+                    using (var db = new WWContext())
+                    {
+                        Content = "";
+                        //find the player
+                        var p = db.Players.FirstOrDefault(x => x.TelegramId == id);
+                        if (p == null)
+                        {
+                            //remove the command
+                            throw new Exception("Player has never played a game.");
+                        }
+
+                        var gamesPlayed = p.GamePlayers.Count();
+                        var won = p.GamePlayers.Count(x => x.Won);
+                        var lost = gamesPlayed - won;
+                        var survived = p.GamePlayers.Count(x => x.Survived);
+                        var roleInfo = db.PlayerRoles(u.Id).ToList();
+                        var killed = db.PlayerMostKilled(u.Id).FirstOrDefault();
+                        var killedby = db.PlayerMostKilledBy(u.Id).FirstOrDefault();
+                        var ach = (Achievements)(p.Achievements ?? 0);
+                        var count = ach.GetUniqueFlags().Count();
+
+                        Content = String.IsNullOrWhiteSpace(username)
+                            ? $"{name.FormatHTML()} the {roleInfo.OrderByDescending(x => x.times).FirstOrDefault()?.role ?? "Noob"}"
+                            : $"<a href=\"https://telegram.me/{username}\">{name.FormatHTML()} the {roleInfo.OrderByDescending(x => x.times).FirstOrDefault()?.role ?? "Noob"}</a>";
+                        Content += $"\n{count.Pad()}Achievements Unlocked!\n" +
+                                   $"{won.Pad()}Games won ({won * 100 / gamesPlayed}%)\n" +
+                                   $"{lost.Pad()}Games lost ({lost * 100 / gamesPlayed}%)\n" +
+                                   $"{survived.Pad()}Games survived ({survived * 100 / gamesPlayed}%)\n" +
+                                   $"{gamesPlayed.Pad()}Total Games\n" +
+                                   $"<code>{killed?.times}</code>\ttimes I've gleefully killed {killed?.Name.FormatHTML()}\n" +
+                                   $"<code>{killedby?.times}</code>\ttimes I've been slaughted by {killedby?.Name.FormatHTML()}";
+                    }
+                }
+                catch (Exception e)
+                {
+                    Content = "Unable to load stats: " + e.Message;
+                }
+                Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html);
             }
             else
             {
