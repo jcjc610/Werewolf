@@ -117,8 +117,8 @@ namespace Updater
                     }
                     Console.WriteLine("Node Update complete. Remember to /replacenodes in order to start them.");
                 }
-                var path = Path.Combine(rootPath, "Control\\werewolf control.exe");
-                Process.Start(path, id);
+                var path2 = Path.Combine(rootPath, "Control\\werewolf control.exe");
+                Process.Start(path2, id);
                 Console.WriteLine("Update complete.");
                 Thread.Sleep(5000);
             }
