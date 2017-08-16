@@ -280,22 +280,23 @@ namespace Werewolf_Control.Helpers
 
             System.IO.File.Copy(newFilePath, copyToPath, true);
             msg += "File copied to bot\n";
-//#if RELEASE
-//            msg += $"File copied to bot 1\n";
-//#elif RELEASE2
-//            msg += $"File copied to bot 2\n";
-//#endif
+            //#if RELEASE
+            //            msg += $"File copied to bot 1\n";
+            //#elif RELEASE2
+            //            msg += $"File copied to bot 2\n";
+            //#endif
             //Bot.Api.EditMessageText(id, msgId, msg);
-//#if RELEASE
-//            copyToPath = copyToPath.Replace("Werewolf 3.0", "Werewolf 3.0 Clone");
-//            System.IO.File.Copy(newFilePath, copyToPath, true);
-//            msg += $"File copied to bot 2\n";
-//            Bot.Api.EditMessageText(id, msgId, msg);
-//#endif
-            var gitPath = Path.Combine(@"C:\Werewolf Source\Werewolf\Werewolf for Telegram\Languages", Path.GetFileName(copyToPath));
-            File.Copy(newFilePath, gitPath, true);
-            System.IO.File.Delete(newFilePath);
-            msg += $"File copied to git directory\n";
+            //#if RELEASE
+            //            copyToPath = copyToPath.Replace("Werewolf 3.0", "Werewolf 3.0 Clone");
+            //            System.IO.File.Copy(newFilePath, copyToPath, true);
+            //            msg += $"File copied to bot 2\n";
+            //            Bot.Api.EditMessageText(id, msgId, msg);
+            //#endif
+            //var gitPath = Path.Combine(@"C:\Werewolf\Languages", Path.GetFileName(copyToPath));
+            //File.Copy(newFilePath, gitPath, true);
+            //System.IO.File.Delete(newFilePath);
+            //msg += $"File copied to git directory\n";
+            /*
             if (newFilePath.EndsWith("English.xml"))
             {
                 var p = new Process
@@ -348,6 +349,7 @@ namespace Werewolf_Control.Helpers
                     msg += $"\n<b>Files committed successfully.</b> {(String.IsNullOrEmpty(commit) ? "" : $"<a href=\"https://github.com/GreyWolfDev/Werewolf/commit/" + commit + $"\">{commit}</a>")}";
                 }
             }
+            */
             msg += "\n<b>Operation complete.</b>";
 
             Bot.Api.EditMessageText(id, msgId, msg, parseMode: ParseMode.Html);
