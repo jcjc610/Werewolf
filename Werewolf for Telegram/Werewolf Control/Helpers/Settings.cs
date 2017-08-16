@@ -36,17 +36,17 @@ namespace Werewolf_Control.Helpers
         public static long VeteranChatId = -1001094614730;
         public static string VeteranChatLink = "werewolfvets";
 #if RELEASE2
-        public static List<string> VillagerDieImages = new List<string> { "BQADAwAD2QEAAnQXsQeU2FMN-2D3GgI", "BQADAwADggADdBexB1_X0udQaRs7Ag", "BQADBAADWAMAAt4cZAcXTtE-UCQXxAI" }; //1
-        public static List<string> WolfWin = new List<string> { "BQADAwADgQADdBexB5kx2CsSNDp2Ag", "BQADAwADgAADdBexBx7XahnW5XBsAg" };
-        public static List<string> WolvesWin = new List<string> { "BQADBAADlwMAAtgaZAeaog1gGP_fkwI", "BQADBAADcAMAAn8ZZAfjUfLaMGoxzgI" };
-        public static List<string> VillagersWin = new List<string> { "BQADAwADgwADdBexB90OD5PHXLAuAg" };
-        public static List<string> NoWinner = new List<string> { "BQADBAAD8QgAAqIeZAeLBjBE4l0LSAI", "BQADBAADuAMAAlUXZAfHXDmd504z5AI" };
-        public static List<string> StartGame = new List<string> { "BQADAwADhAADdBexB7b36d3MSPzDAg", "BQADBAADwg0AAu0XZAcwCVhaZgAB_CsC" };
-        public static List<string> StartChaosGame = new List<string> { "BQADAwAD1wEAAnQXsQeswdJwV9BIyQI", "BQADAwAD2AEAAnQXsQeGw_-A8E7DLwI" }; //2
-        public static List<string> TannerWin = new List<string> { "BQADBAADQwgAAuQaZAcjXuF_tkE3JwI", "BQADBAAD_gMAAtgaZAf2YeVX6mXnUQI" };
-        public static List<string> CultWins = new List<string> { "BQADBAADWAMAAosYZAcuRvZYBpQmXwI", "BQADBAADHwsAAgUYZAcUTEIahD8XSQI" };
-        public static List<string> SerialKillerWins = new List<string> { "BQADBAADdQMAAsEcZAd7skaRqoWKzQI", "BQADBAADmgMAArgcZAdPyqayfRT6bQI", "BQADBAADOAQAAqUXZAeeuV5vjRd6QAI", "BQADBAADKwMAAsQZZAfwd2_EAeeOTgI" };
-        public static List<string> LoversWin = new List<string> { "BQADBAAD8hUAAhYYZAeHmbRRzioXXQI", "BQADBAADYAMAAkMdZAfR4qo8c95FGgI" };
+public static List<string> VillagerDieImages = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> WolfWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> WolvesWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> VillagersWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> NoWinner = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> StartGame = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> StartChaosGame = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> TannerWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> CultWins = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> SerialKillerWins = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> LoversWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
 #elif RELEASE
         public static List<string> VillagerDieImages = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
         public static List<string> WolfWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
@@ -60,18 +60,18 @@ namespace Werewolf_Control.Helpers
         public static List<string> SerialKillerWins = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
         public static List<string> LoversWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
 #else
-        public static List<string> VillagerDieImages = new List<string> { "BQADAwADggADdBexBxVNNy-rt--bAg", "BQADBAADWAMAAt4cZAfbY0WobzNPwAI", "BQADBAADKgMAAoMbZAc7Ldme4T3DKQI" };
-        public static List<string> WolfWin = new List<string> { "BQADAwADgQADdBexBzrFBt-CBlhbAg", "BQADAwADgAADdBexB88vVl1RuLb3Ag" };
-        public static List<string> WolvesWin = new List<string> { "BQADBAADcAMAAn8ZZAfjilsAAeijzEAC", "BQADBAADlwMAAtgaZAcKX7eF4AgXCAI" };
-        public static List<string> VillagersWin = new List<string> { "BQADAwADgwADdBexB5XubJT7w_zDAg" };
-        public static List<string> NoWinner = new List<string> { "BQADBAAD8QgAAqIeZAdO5PeO55YsOQI", "BQADBAADuAMAAlUXZAePrr-YU3PDJwI" };
-        public static List<string> StartGame = new List<string> { "BQADBAADwg0AAu0XZAdw1sAIIH6xQQI", "BQADAwADhAADdBexByVGjSOQUSx_Ag" };
-        public static List<string> StartChaosGame = new List<string> { "BQADBAAD7wYAAgcYZAfk95HeMjOEfgI", "BQADBAAD_wcAAiUYZAcehPF7vHGFXAI" };
-        public static List<string> TannerWin = new List<string> { "BQADBAAD_gMAAtgaZAeTCzBjKyXi6wI", "BQADBAADQwgAAuQaZAcBXBZ1bAUmwQI" };
-        public static List<string> CultWins = new List<string> { "BQADBAADWAMAAosYZAfwfixffVnZywI", "BQADBAADHwsAAgUYZAfm4J7Dr5HpJQI" };
-        public static List<string> SerialKillerWins = new List<string> { "BQADBAADdQMAAsEcZAf2I8Sj2kPcNQI", "BQADBAADmgMAArgcZAebNN10T84w9AI", "BQADBAADKwMAAsQZZAflRhJNO_knQAI", "BQADBAADOAQAAqUXZAcKgmVLwfIHvAI" };
-        public static List<string> LoversWin = new List<string> { "BQADBAADYAMAAkMdZAf0_rs89KCyDAI", "BQADBAAD8hUAAhYYZAcV2T0l7f-lJQI" };
-#endif
+        public static List<string> VillagerDieImages = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> WolfWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> WolvesWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> VillagersWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> NoWinner = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> StartGame = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> StartChaosGame = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> TannerWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> CultWins = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> SerialKillerWins = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> LoversWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+ #endif
 
         /// <summary>
         /// How many games are allowed for any given node
