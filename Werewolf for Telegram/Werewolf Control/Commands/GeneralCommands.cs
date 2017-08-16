@@ -473,7 +473,7 @@ namespace Werewolf_Control
             {
                 Content = "Unable to load stats: " + e.Message;
             }
-            Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html);
+            Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html, disableWebPagePreview: true);
             
         }
     }
