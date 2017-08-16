@@ -466,6 +466,7 @@ namespace Werewolf_Control
                                $"{survived.Pad()}Games survived ({survived * 100 / gamesPlayed}%)\n" +
                                $"{gamesPlayed.Pad()}Total Games\n" +
                                $"<code>{killed?.times}</code>\ttimes I've gleefully killed {killed?.Name.FormatHTML()}\n" +
+                               $"<code>{killedby?.times}</code>\ttimes I've been slaughted by {killedby?.Name.FormatHTML()}";
                 }
             }
             catch (Exception e)
