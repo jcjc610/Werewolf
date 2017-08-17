@@ -1180,8 +1180,8 @@ namespace Werewolf_Node
                 //force roles for testing
                 rolesToAssign[0] = IRole.WolfCub;
                 rolesToAssign[1] = IRole.WolfCub;
-                rolesToAssign[2] = IRole.AlphaWolf;
-                rolesToAssign[3] = IRole.WolfCub;
+                //rolesToAssign[2] = IRole.AlphaWolf;
+                //rolesToAssign[3] = IRole.WolfCub;
                 //if (rolesToAssign.Count >= 5)
                 //    rolesToAssign[4] = IRole.Villager;
 #endif
@@ -3363,26 +3363,20 @@ namespace Werewolf_Node
             {
                 if (alivePlayers.Any(x => x.PlayerRole == IRole.Gunner && x.Bullet > 0))
                 {
-                    var wolves = alivePlayers.Where(x => WolfRoles.Contains(x.PlayerRole));
-                    var others = alivePlayers.Where(x => !WolfRoles.Contains(x.PlayerRole));
-                    // gunner makes the difference only if wolves are exactly as many as the others, or two wolves are in love and the gunner can kill two of them at once
-                    var gunnermakesthedifference = (wolves.Count() == others.Count()) || (wolves.Count() == others.Count() + 1 && wolves.Count(x => x.InLove) == 2);
-                    if (gunnermakesthedifference)
-                    {
-                        // do nothing, gunner can still make VGs win
-                        foreach (var p in alivePlayers.Where(x => x.Team == ITeam.Village))
-                            AddAchievement(p, Achievements.GunnerSaves);
-                        return false;
-                    }
-                    return DoGameEnd(ITeam.Wolf);
+                    // do nothing, gunner is alive
+                    foreach (var p in alivePlayers.Where(x => x.Team == ITeam.Village))
+                        AddAchievement(p, Achievements.GunnerSaves);
+                    return false;
                 }
+                return DoGameEnd(ITeam.Wolf);
+            }
 
-                if (alivePlayers.All(x => !WolfRoles.Contains(x.PlayerRole) && x.PlayerRole != IRole.Cultist && x.PlayerRole != IRole.SerialKiller)) //checks for cult and SK are actually useless...
-                    //no wolf, no cult, no SK... VG wins!
-                    if (!checkbitten || alivePlayers.All(x => !x.Bitten)) //unless bitten is about to turn into a wolf
-                        return DoGameEnd(ITeam.Village);
+            if (alivePlayers.All(x => !WolfRoles.Contains(x.PlayerRole) && x.PlayerRole != IRole.Cultist && x.PlayerRole != IRole.SerialKiller)) //checks for cult and SK are actually useless...
+                //no wolf, no cult, no SK... VG wins!
+                return DoGameEnd(ITeam.Village);
 
-                return false;
+
+            return false;
         }
 
         private bool DoGameEnd(ITeam team)
