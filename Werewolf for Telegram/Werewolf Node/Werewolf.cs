@@ -4097,9 +4097,15 @@ namespace Werewolf_Node
 
                     db.SaveChanges();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    Log.WriteLine(e.Message + "\n" + e.StackTrace, LogLevel.Error, fileName: "error.log");
+                    while (ex.InnerException != null)
+                        ex = ex.InnerException;
+
+                    Send(
+                        Program.Version.FileVersion +
+                        $"\nGroup: {ChatId} ({ChatGroup})\nLanguage: {DbGroup?.Language ?? "null"}\n{Program.ClientId}\n{ex.Message}\n{ex.StackTrace}",
+                        Program.ErrorGroup);
                 }
             }
 
