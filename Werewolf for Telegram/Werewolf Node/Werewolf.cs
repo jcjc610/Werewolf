@@ -107,6 +107,11 @@ namespace Werewolf_Node
             }
 
         }
+
+        private string GetRandomImage(List<string> input)
+        {
+            return input[Program.R.Next(0, input.Count)];
+        }
         #endregion
 
         #region Language Helpers
