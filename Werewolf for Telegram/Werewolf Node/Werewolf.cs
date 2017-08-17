@@ -3284,10 +3284,10 @@ namespace Werewolf_Node
                     return DoGameEnd(ITeam.NoOne);
                 case 1:
                     var p = alivePlayers.FirstOrDefault();
-                    if (p.PlayerRole == IRole.Tanner)
+                    if (p.PlayerRole == IRole.Tanner || p.PlayerRole == IRole.Sorcerer)
                         return DoGameEnd(ITeam.NoOne);
                     else
-                        return DoGameEnd(ITeam.Village);
+                        return DoGameEnd(p.Team);
                 case 2:
                     //check for lovers
                     if (alivePlayers.All(x => x.InLove))
@@ -3378,7 +3378,6 @@ namespace Werewolf_Node
                             AddAchievement(p, Achievements.GunnerSaves);
                         return false;
                     }
-
                 }
                 return DoGameEnd(ITeam.Wolf);
             }
@@ -3387,6 +3386,7 @@ namespace Werewolf_Node
                 //no wolf, no cult, no SK... VG wins!
                 if (!checkbitten || alivePlayers.All(x => !x.Bitten)) //unless bitten is about to turn into a wolf
                     return DoGameEnd(ITeam.Village);
+
 
             return false;
         }
