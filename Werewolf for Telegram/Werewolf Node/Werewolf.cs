@@ -4097,7 +4097,7 @@ namespace Werewolf_Node
                 }
                 catch (Exception)
                 {
-                    //Log.WriteLine(e.Message + "\n" + e.StackTrace, LogLevel.Error, fileName: "error.log");
+                    Log.WriteLine(e.Message + "\n" + e.StackTrace, LogLevel.Error, fileName: "error.log");
                 }
             }
 
