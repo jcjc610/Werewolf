@@ -451,9 +451,9 @@ namespace Werewolf_Control
                     var won = p.GamePlayers.Count(x => x.Won);
                     var lost = gamesPlayed - won;
                     var survived = p.GamePlayers.Count(x => x.Survived);
-                    var roleInfo = db.PlayerRoles(u.Id).ToList();
-                    var killed = db.PlayerMostKilled(u.Id).FirstOrDefault();
-                    var killedby = db.PlayerMostKilledBy(u.Id).FirstOrDefault();
+                    var roleInfo = db.PlayerRoles(id).ToList();
+                    var killed = db.PlayerMostKilled(id).FirstOrDefault();
+                    var killedby = db.PlayerMostKilledBy(id).FirstOrDefault();
                     var ach = (Achievements)(p.Achievements ?? 0);
                     var count = ach.GetUniqueFlags().Count();
 
