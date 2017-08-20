@@ -113,6 +113,24 @@
           <Property Name="GrpId" Type="int" />
           <Property Name="Mode" Type="nvarchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="GameGif">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VariantId" Type="int" Nullable="false" />
+          <Property Name="StartGame" Type="nvarchar" MaxLength="50" />
+          <Property Name="StartChaosGame" Type="nvarchar" MaxLength="50" />
+          <Property Name="VillagerDieImages" Type="nvarchar" MaxLength="50" />
+          <Property Name="WolfWin" Type="nvarchar" MaxLength="50" />
+          <Property Name="WolvesWin" Type="nvarchar" MaxLength="50" />
+          <Property Name="VillagersWin" Type="nvarchar" MaxLength="50" />
+          <Property Name="TannerWin" Type="nvarchar" MaxLength="50" />
+          <Property Name="LoversWin" Type="nvarchar" MaxLength="50" />
+          <Property Name="SerialKillerWins" Type="nvarchar" MaxLength="50" />
+          <Property Name="CultWins" Type="nvarchar" MaxLength="50" />
+          <Property Name="NoWinner" Type="nvarchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="GameKill">
           <Key>
             <PropertyRef Name="Id" />
@@ -450,6 +468,18 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_GameGif_LanguageVariant">
+          <End Role="LanguageVariant" Type="Self.LanguageVariant" Multiplicity="1" />
+          <End Role="GameGif" Type="Self.GameGif" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LanguageVariant">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GameGif">
+              <PropertyRef Name="VariantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_GameKill_Game">
           <End Role="Game" Type="Self.Game" Multiplicity="1" />
           <End Role="GameKill" Type="Self.GameKill" Multiplicity="*" />
@@ -597,6 +627,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DailyCount" EntityType="Self.DailyCount" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Game" EntityType="Self.Game" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="GameGif" EntityType="Self.GameGif" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GameKill" EntityType="Self.GameKill" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GamePlayer" EntityType="Self.GamePlayer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GlobalStats" EntityType="Self.GlobalStats" Schema="dbo" store:Type="Tables" />
@@ -701,6 +732,10 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <AssociationSet Name="FK_Game_Group" Association="Self.FK_Game_Group">
             <End Role="Group" EntitySet="Group" />
             <End Role="Game" EntitySet="Game" />
+          </AssociationSet>
+          <AssociationSet Name="FK_GameGif_LanguageVariant" Association="Self.FK_GameGif_LanguageVariant">
+            <End Role="LanguageVariant" EntitySet="LanguageVariant" />
+            <End Role="GameGif" EntitySet="GameGif" />
           </AssociationSet>
           <AssociationSet Name="FK_GameKill_Game" Association="Self.FK_GameKill_Game">
             <End Role="Game" EntitySet="Game" />
@@ -1107,6 +1142,11 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             <End Role="Language" EntitySet="Languages" />
             <End Role="LanguageVariant" EntitySet="LanguageVariants" />
           </AssociationSet>
+          <EntitySet Name="GameGifs" EntityType="werewolfModel.GameGif" />
+          <AssociationSet Name="FK_GameGif_LanguageVariant" Association="werewolfModel.FK_GameGif_LanguageVariant">
+            <End Role="LanguageVariant" EntitySet="LanguageVariants" />
+            <End Role="GameGif" EntitySet="GameGifs" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="getPlayTime_Result">
           <Property Type="Int32" Name="Average" Nullable="true" />
@@ -1444,6 +1484,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="LanguageId" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Language" Relationship="werewolfModel.FK_LanguageVariant_Language" FromRole="LanguageVariant" ToRole="Language" />
+          <NavigationProperty Name="GameGifs" Relationship="werewolfModel.FK_GameGif_LanguageVariant" FromRole="LanguageVariant" ToRole="GameGif" />
         </EntityType>
         <Association Name="FK_LanguageVariant_Language">
           <End Type="werewolfModel.Language" Role="Language" Multiplicity="1" />
@@ -1454,6 +1495,37 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Principal>
             <Dependent Role="LanguageVariant">
               <PropertyRef Name="LanguageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="GameGif">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VariantId" Type="Int32" Nullable="false" />
+          <Property Name="StartGame" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StartChaosGame" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="VillagerDieImages" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WolfWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WolvesWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="VillagersWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TannerWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LoversWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SerialKillerWins" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CultWins" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NoWinner" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="LanguageVariant" Relationship="werewolfModel.FK_GameGif_LanguageVariant" FromRole="GameGif" ToRole="LanguageVariant" />
+        </EntityType>
+        <Association Name="FK_GameGif_LanguageVariant">
+          <End Type="werewolfModel.LanguageVariant" Role="LanguageVariant" Multiplicity="1" />
+          <End Type="werewolfModel.GameGif" Role="GameGif" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LanguageVariant">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="GameGif">
+              <PropertyRef Name="VariantId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1964,6 +2036,25 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
               <MappingFragment StoreEntitySet="LanguageVariant">
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="LanguageId" ColumnName="LanguageId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GameGifs">
+            <EntityTypeMapping TypeName="werewolfModel.GameGif">
+              <MappingFragment StoreEntitySet="GameGif">
+                <ScalarProperty Name="NoWinner" ColumnName="NoWinner" />
+                <ScalarProperty Name="CultWins" ColumnName="CultWins" />
+                <ScalarProperty Name="SerialKillerWins" ColumnName="SerialKillerWins" />
+                <ScalarProperty Name="LoversWin" ColumnName="LoversWin" />
+                <ScalarProperty Name="TannerWin" ColumnName="TannerWin" />
+                <ScalarProperty Name="VillagersWin" ColumnName="VillagersWin" />
+                <ScalarProperty Name="WolvesWin" ColumnName="WolvesWin" />
+                <ScalarProperty Name="WolfWin" ColumnName="WolfWin" />
+                <ScalarProperty Name="VillagerDieImages" ColumnName="VillagerDieImages" />
+                <ScalarProperty Name="StartChaosGame" ColumnName="StartChaosGame" />
+                <ScalarProperty Name="StartGame" ColumnName="StartGame" />
+                <ScalarProperty Name="VariantId" ColumnName="VariantId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
