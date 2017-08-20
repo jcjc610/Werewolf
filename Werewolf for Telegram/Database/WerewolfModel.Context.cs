@@ -52,6 +52,8 @@ namespace Database
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<Language> Languages { get; set; }
+        public virtual DbSet<LanguageVariant> LanguageVariants { get; set; }
     
         public virtual ObjectResult<getPlayTime_Result> getPlayTime(Nullable<int> playerCount)
         {

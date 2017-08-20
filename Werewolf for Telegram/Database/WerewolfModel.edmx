@@ -190,6 +190,9 @@
           <Property Name="MemberCount" Type="int" />
           <Property Name="AllowExtend" Type="bit" />
           <Property Name="MaxExtend" Type="int" />
+          <Property Name="EnableSecretLynch" Type="bit" />
+          <Property Name="RandomModes" Type="bit" />
+          <Property Name="Flags" Type="bigint" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'werewolf.dbo.GroupAdmin' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -226,6 +229,21 @@ warning 6002: The table/view 'werewolf.dbo.GroupAdmin' does not have a primary k
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="Language">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LanguageVariant">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LanguageId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'werewolf.dbo.NotifyGame' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="NotifyGame">
@@ -255,6 +273,10 @@ warning 6002: The table/view 'werewolf.dbo.NotifyGame' does not have a primary k
           <Property Name="HasDebugPM" Type="bit" />
           <Property Name="Achievements" Type="bigint" />
           <Property Name="WebUserId" Type="nvarchar" MaxLength="128" />
+          <Property Name="DonationLevel" Type="int" />
+          <Property Name="Founder" Type="bit" />
+          <Property Name="CustomGifSet" Type="nvarchar(max)" />
+          <Property Name="GifPurchased" Type="bit" />
         </EntityType>
         <EntityType Name="PlayerStats">
           <Key>
@@ -417,9 +439,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Game_Group">
-          <End Role="Group" Type="Self.Group" Multiplicity="0..1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Group" Type="Self.Group" Multiplicity="0..1" />
           <End Role="Game" Type="Self.Game" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Group">
@@ -431,9 +451,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GameKill_Game">
-          <End Role="Game" Type="Self.Game" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
           <End Role="GameKill" Type="Self.GameKill" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Game">
@@ -445,9 +463,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GameKill_Killer">
-          <End Role="Player" Type="Self.Player" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
           <End Role="GameKill" Type="Self.GameKill" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Player">
@@ -459,9 +475,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GameKill_KillMethod">
-          <End Role="KillMethod" Type="Self.KillMethod" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="KillMethod" Type="Self.KillMethod" Multiplicity="1" />
           <End Role="GameKill" Type="Self.GameKill" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="KillMethod">
@@ -472,22 +486,20 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_GamePlayer_Game">
-          <End Role="Game" Type="Self.Game" Multiplicity="1" />
-          <End Role="GamePlayer" Type="Self.GamePlayer" Multiplicity="*" />
+        <Association Name="FK_GameKill_Victim">
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
+          <End Role="GameKill" Type="Self.GameKill" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Game">
+            <Principal Role="Player">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="GamePlayer">
-              <PropertyRef Name="GameId" />
+            <Dependent Role="GameKill">
+              <PropertyRef Name="VictimId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GamePlayer_Player">
-          <End Role="Player" Type="Self.Player" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
           <End Role="GamePlayer" Type="Self.GamePlayer" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Player">
@@ -499,9 +511,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GroupAdmin_Group">
-          <End Role="Group" Type="Self.Group" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Group" Type="Self.Group" Multiplicity="1" />
           <End Role="GroupAdmin" Type="Self.GroupAdmin" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Group">
@@ -513,9 +523,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_GroupAdmin_Player">
-          <End Role="Player" Type="Self.Player" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
           <End Role="GroupAdmin" Type="Self.GroupAdmin" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Player">
@@ -523,6 +531,18 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Principal>
             <Dependent Role="GroupAdmin">
               <PropertyRef Name="PlayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LanguageVariant_Language">
+          <End Role="Language" Type="Self.Language" Multiplicity="1" />
+          <End Role="LanguageVariant" Type="Self.LanguageVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Language">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LanguageVariant">
+              <PropertyRef Name="LanguageId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -583,6 +603,8 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySet Name="Group" EntityType="Self.Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GroupStats" EntityType="Self.GroupStats" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KillMethod" EntityType="Self.KillMethod" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Language" EntityType="Self.Language" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LanguageVariant" EntityType="Self.LanguageVariant" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Player" EntityType="Self.Player" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PlayerStats" EntityType="Self.PlayerStats" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GroupAdmin" EntityType="Self.GroupAdmin" store:Type="Tables" store:Schema="dbo">
@@ -692,9 +714,9 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             <End Role="KillMethod" EntitySet="KillMethod" />
             <End Role="GameKill" EntitySet="GameKill" />
           </AssociationSet>
-          <AssociationSet Name="FK_GamePlayer_Game" Association="Self.FK_GamePlayer_Game">
-            <End Role="Game" EntitySet="Game" />
-            <End Role="GamePlayer" EntitySet="GamePlayer" />
+          <AssociationSet Name="FK_GameKill_Victim" Association="Self.FK_GameKill_Victim">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="GameKill" EntitySet="GameKill" />
           </AssociationSet>
           <AssociationSet Name="FK_GamePlayer_Player" Association="Self.FK_GamePlayer_Player">
             <End Role="Player" EntitySet="Player" />
@@ -707,6 +729,10 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <AssociationSet Name="FK_GroupAdmin_Player" Association="Self.FK_GroupAdmin_Player">
             <End Role="Player" EntitySet="Player" />
             <End Role="GroupAdmin" EntitySet="GroupAdmin" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LanguageVariant_Language" Association="Self.FK_LanguageVariant_Language">
+            <End Role="Language" EntitySet="Language" />
+            <End Role="LanguageVariant" EntitySet="LanguageVariant" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -796,6 +822,9 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="MemberCount" Type="Int32" />
           <Property Name="AllowExtend" Type="Boolean" />
           <Property Name="MaxExtend" Type="Int32" />
+          <Property Name="EnableSecretLynch" Type="Boolean" />
+          <Property Name="RandomModes" Type="Boolean" />
+          <Property Name="Flags" Type="Int64" />
         </EntityType>
         <EntityType Name="KillMethod">
           <Key>
@@ -828,6 +857,10 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="HasDebugPM" Type="Boolean" />
           <Property Name="Achievements" Type="Int64" />
           <Property Name="WebUserId" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DonationLevel" Type="Int32" />
+          <Property Name="Founder" Type="Boolean" />
+          <Property Name="CustomGifSet" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="GifPurchased" Type="Boolean" />
         </EntityType>
         <EntityType Name="NotifyGame">
           <Key>
@@ -1068,6 +1101,12 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             <Parameter Name="oldTGId" Mode="In" Type="Int32" />
             <Parameter Name="newTGId" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="Languages" EntityType="werewolfModel.Language" />
+          <EntitySet Name="LanguageVariants" EntityType="werewolfModel.LanguageVariant" />
+          <AssociationSet Name="FK_LanguageVariant_Language" Association="werewolfModel.FK_LanguageVariant_Language">
+            <End Role="Language" EntitySet="Languages" />
+            <End Role="LanguageVariant" EntitySet="LanguageVariants" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="getPlayTime_Result">
           <Property Type="Int32" Name="Average" Nullable="true" />
@@ -1389,6 +1428,35 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Language">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="LanguageVariants" Relationship="werewolfModel.FK_LanguageVariant_Language" FromRole="Language" ToRole="LanguageVariant" />
+        </EntityType>
+        <EntityType Name="LanguageVariant">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LanguageId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Language" Relationship="werewolfModel.FK_LanguageVariant_Language" FromRole="LanguageVariant" ToRole="Language" />
+        </EntityType>
+        <Association Name="FK_LanguageVariant_Language">
+          <End Type="werewolfModel.Language" Role="Language" Multiplicity="1" />
+          <End Type="werewolfModel.LanguageVariant" Role="LanguageVariant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Language">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LanguageVariant">
+              <PropertyRef Name="LanguageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1444,6 +1512,9 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySetMapping Name="Groups">
             <EntityTypeMapping TypeName="werewolfModel.Group">
               <MappingFragment StoreEntitySet="Group">
+                <ScalarProperty Name="Flags" ColumnName="Flags" />
+                <ScalarProperty Name="RandomModes" ColumnName="RandomModes" />
+                <ScalarProperty Name="EnableSecretLynch" ColumnName="EnableSecretLynch" />
                 <ScalarProperty Name="MaxExtend" ColumnName="MaxExtend" />
                 <ScalarProperty Name="AllowExtend" ColumnName="AllowExtend" />
                 <ScalarProperty Name="MemberCount" ColumnName="MemberCount" />
@@ -1484,6 +1555,10 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySetMapping Name="Players">
             <EntityTypeMapping TypeName="werewolfModel.Player">
               <MappingFragment StoreEntitySet="Player">
+                <ScalarProperty Name="GifPurchased" ColumnName="GifPurchased" />
+                <ScalarProperty Name="CustomGifSet" ColumnName="CustomGifSet" />
+                <ScalarProperty Name="Founder" ColumnName="Founder" />
+                <ScalarProperty Name="DonationLevel" ColumnName="DonationLevel" />
                 <ScalarProperty Name="WebUserId" ColumnName="WebUserId" />
                 <ScalarProperty Name="Achievements" ColumnName="Achievements" />
                 <ScalarProperty Name="HasDebugPM" ColumnName="HasDebugPM" />
@@ -1876,6 +1951,23 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </EndProperty>
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="RestoreAccount" FunctionName="werewolfModel.Store.RestoreAccount" />
+          <EntitySetMapping Name="Languages">
+            <EntityTypeMapping TypeName="werewolfModel.Language">
+              <MappingFragment StoreEntitySet="Language">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LanguageVariants">
+            <EntityTypeMapping TypeName="werewolfModel.LanguageVariant">
+              <MappingFragment StoreEntitySet="LanguageVariant">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="LanguageId" ColumnName="LanguageId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
