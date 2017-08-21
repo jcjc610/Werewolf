@@ -219,6 +219,7 @@
     <Compile Include="Commands\GeneralCommands.cs" />
     <Compile Include="Commands\HelpCommands.cs" />
     <Compile Include="Commands\Helpers.cs" />
+    <Compile Include="Commands\LangPackGifCommands.cs" />
     <Compile Include="Handlers\UpdateHandler.cs" />
     <Compile Include="Helpers\Bot.cs" />
     <Compile Include="Helpers\Charting.cs" />

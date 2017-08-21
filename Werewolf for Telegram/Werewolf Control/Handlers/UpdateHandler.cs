@@ -415,6 +415,13 @@ namespace Werewolf_Control.Handler
                                 var doc = update.Message.Document;
                                 Send(doc.FileId, update.Message.Chat.Id);
                             }
+                            else if (update.Message.Chat.Type == ChatType.Private &&
+                                (update.Message?.ReplyToMessage?.From?.Id ?? 0) == Bot.Me.Id &&
+                                (update.Message?.ReplyToMessage.Text?.Contains(
+                                    "Please send me the new gif file for:") ?? false))
+                            {
+                                Commands.AddLangPackGif(update.Message);
+                            }
                             break;
                         case MessageType.StickerMessage:
                             break;
@@ -731,6 +738,60 @@ namespace Werewolf_Control.Handler
                         else
                         {
                             Bot.ReplyToCallback(query, "You aren't Para! Go Away!!", false, true);
+                        }
+                    }
+                    if (args[0] == "langpackgif")
+                    {
+                        int variantId = 0;
+                        int.TryParse(args[2], out variantId);
+                        if (args.Length == 3)
+                        {
+                            InlineKeyboardMarkup newmenu = GetLangPackGifMenu(query.From.Id, variantId);
+                            Bot.Edit(query, "Please choose from the below Gif Titles.", newmenu);
+                            return;
+                        }
+                        else if (args.Length == 4)
+                        {
+                            Bot.Edit(query, "OK.");
+                            string giftype = args[3];
+                            string msg = "Please send me the new gif file for: ";
+                            var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "noonewin", "startgame", "starchaos" };
+                            switch (giftype)
+                            {
+                                case "vgeaten":
+                                    msg += "Villager Eaten #vgeaten";
+                                    break;
+                                case "wolfwin":
+                                    msg += "Single Wolf Wins #wolfwin";
+                                    break;
+                                case "wolveswin":
+                                    msg += "Wolf Pack Wins #wolveswin";
+                                    break;
+                                case "vgwin":
+                                    msg += "Villagers Win #vgwin";
+                                    break;
+                                case "tannerwin":
+                                    msg += "Tanner Wins #tannerwin";
+                                    break;
+                                case "cultwin":
+                                    msg += "Serial Killer Wins #cultwin";
+                                    break;
+                                case "loverwin":
+                                    msg += "Lovers Win #loverwin";
+                                    break;
+                                case "nowinner":
+                                    msg += "No Winner #nowinner";
+                                    break;
+                                case "startgame":
+                                    msg += "Start Normal Game #startgame";
+                                    break;
+                                case "startchaos":
+                                    msg += "Start Chaos Game #startchaos";
+                                    break;
+                            }
+                            msg = $"{msg} ${variantId}";
+                            Bot.Api.SendTextMessage(query.From.Id, msg, replyMarkup: new ForceReply() { Force = true });
+                            return;
                         }
                     }
                     InlineKeyboardMarkup menu;
@@ -1345,7 +1406,76 @@ namespace Werewolf_Control.Handler
         }
 
 
-        
+        internal static InlineKeyboardMarkup GetLangPackGifMenu(long id, int variantid = 0)
+        {
+            List<InlineKeyboardButton> buttons = new List<InlineKeyboardButton>();
+            //base menu
+            using (var db = new WWContext())
+            {
+                if (variantid <= 0)
+                {
+                    var variants = (from la in db.LanguageAdmins
+                                    join lv in db.LanguageVariants on la.VariantId equals lv.Id
+                                    where la.TelegramId == id
+                                    select lv).Distinct();
+                    foreach (var variant in variants)
+                    {
+                        buttons.Add(new InlineKeyboardButton(variant.Name, $"langpackgif|{id}|{variant.Id}"));
+                    }
+                    var twoMenu = new List<InlineKeyboardButton[]>();
+                    for (var i = 0; i < buttons.Count; i++)
+                    {
+                        twoMenu.Add(new[] { buttons[i] });
+                    }
+                    var menu = new InlineKeyboardMarkup(twoMenu.ToArray());
+                    return menu;
+                }
+                else
+                {
+                    var variant = db.GameGifs.FirstOrDefault(x => x.VariantId == variantid);
+                    if (variant == null)
+                    {
+                        variant = new GameGif { VariantId = variantid };
+                        db.GameGifs.Add(variant);
+                        db.SaveChanges();
+                    }
+                    variant = db.GameGifs.FirstOrDefault(x => x.VariantId == variantid);
+                    var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "noonewin", "startgame", "starchaos" };
+                    //Villager Eaten
+                    buttons.Add(new InlineKeyboardButton("Villager Eaten" + ((variant.VillagerDieImages != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|"+giftypes[0]));
+                    //Lone Wolf Wins
+                    buttons.Add(new InlineKeyboardButton("Lone Wolf Wins" + ((variant.WolfWin != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[1]));
+                    //Wolf Pack Win
+                    buttons.Add(new InlineKeyboardButton("Wolf Pack Win" + ((variant.WolvesWin != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[2]));
+                    //Village Wins
+                    buttons.Add(new InlineKeyboardButton("Village Wins" + ((variant.VillagersWin != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[3]));
+                    //Tanner Wins
+                    buttons.Add(new InlineKeyboardButton("Tanner Wins" + ((variant.TannerWin != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[4]));
+                    //Cult Wins
+                    buttons.Add(new InlineKeyboardButton("Cult Wins" + ((variant.CultWins != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[5]));
+                    //Serial Killer Wins
+                    buttons.Add(new InlineKeyboardButton("Serial Killer Wins" + ((variant.SerialKillerWins != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[6]));
+                    //Lovers Win
+                    buttons.Add(new InlineKeyboardButton("Lovers Win" + ((variant.LoversWin != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[7]));
+                    //No Winner
+                    buttons.Add(new InlineKeyboardButton("No Winner" + ((variant.NoWinner != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[8]));
+                    //Normal Game Start
+                    buttons.Add(new InlineKeyboardButton("Normal Game Start" + ((variant.StartGame != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[9]));
+                    //Chaos Game Start
+                    buttons.Add(new InlineKeyboardButton("Chaos Game Start" + ((variant.StartChaosGame != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[10]));
+                    var twoMenu = new List<InlineKeyboardButton[]>();
+                    for (var i = 0; i < buttons.Count; i++)
+                    {
+                        twoMenu.Add(new[] { buttons[i] });
+                    }
+                    var menu = new InlineKeyboardMarkup(twoMenu.ToArray());
+                    db.SaveChanges();
+                    return menu;
+                }
+            }
+        }
+
+
         public static void InlineQueryReceived(object sender, InlineQueryEventArgs e)
         {
             new Task(() => { HandleInlineQuery(e.InlineQuery); }).Start();
