@@ -1392,7 +1392,7 @@ namespace Werewolf_Control
             else
             {
                 var p = args[1].Split();
-                if (args.Length < 3 || String.IsNullOrEmpty(args[1]) || p.Length < 2)
+                if (args.Length < 2 || String.IsNullOrEmpty(args[1]) || p.Length < 2)
                 {
                     Send("Provide ID + Variant Name.", u.Message.Chat.Id);
                     return;
