@@ -1367,8 +1367,8 @@ namespace Werewolf_Control
         public static void AddLangAdmin(Update u, string[] args)
         {
             int id = 0;
-            string lang;
-            string name;
+            string lang = null;
+            string name = null;
             if (u.Message.ReplyToMessage != null)
             {
                 var m = u.Message.ReplyToMessage;
