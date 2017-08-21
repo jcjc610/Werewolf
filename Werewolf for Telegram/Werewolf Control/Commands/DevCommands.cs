@@ -1387,16 +1387,22 @@ namespace Werewolf_Control
                     Send("Provide Variant Name.", u.Message.Chat.Id);
                     return;
                 }
-                lang = String.Join(" ", args.Skip(1).ToArray());
+                lang = args[1];
             }
             else
             {
-                if (args.Length < 3 || !int.TryParse(args[1], out id) || String.IsNullOrEmpty(args[2]))
+                var p = args[1].Split();
+                if (args.Length < 3 || String.IsNullOrEmpty(args[1]) || p.Length < 2)
                 {
                     Send("Provide ID + Variant Name.", u.Message.Chat.Id);
                     return;
                 }
-                lang = String.Join(" ", args.Skip(2).ToArray());
+                if (!int.TryParse(p[0], out id))
+                {
+                    Send("First argument must be a telegram ID", u.Message.Chat.Id);
+                    return;
+                }
+                lang = String.Join(" ", p.Skip(1).ToArray());
             }
             using (var db = new WWContext())
             {
@@ -1410,10 +1416,12 @@ namespace Werewolf_Control
                             TelegramId = id,
                             VariantId = variant.Id
                         };
+                        db.LanguageAdmins.Add(newadmin);
+                        db.SaveChanges();
+                        string toname = name ?? id.ToString();
+                        Send(String.Format("{0} is now a Language Admin For {1}", toname, lang), u.Message.Chat.Id);
                     }
-                    db.SaveChanges();
-                    string toname = name ?? id.ToString();
-                    Send(String.Format("{0} is now a Language Admin For {1}", toname, lang), u.Message.Chat.Id);
+                    
                 }
                 catch
                 {
