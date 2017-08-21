@@ -378,10 +378,13 @@ namespace Werewolf_Control.Handler
                                     }
                                     if (command.LanguageAdminOnly)
                                     {
-                                        if (!(UpdateHelper.Devs.Contains(update.Message.From.Id) || !UpdateHelper.IsGlobalAdmin(update.Message.From.Id) || !UpdateHelper.IsLanguageAdmin(update.Message.From.Id)))
+                                        if (!UpdateHelper.IsLanguageAdmin(update.Message.From.Id))
                                         {
-                                            Send("You are not Language Admin", id);
-                                            return;
+                                            if (!UpdateHelper.IsGlobalAdmin(update.Message.From.Id))
+                                            {
+                                                Send("You are not Language Admin", id);
+                                                return;
+                                            }
                                         }
                                     }
                                     Bot.CommandsReceived++;
