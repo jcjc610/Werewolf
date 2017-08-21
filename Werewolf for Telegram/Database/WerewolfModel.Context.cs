@@ -55,6 +55,7 @@ namespace Database
         public virtual DbSet<Language> Languages { get; set; }
         public virtual DbSet<LanguageVariant> LanguageVariants { get; set; }
         public virtual DbSet<GameGif> GameGifs { get; set; }
+        public virtual DbSet<LanguageAdmin> LanguageAdmins { get; set; }
     
         public virtual ObjectResult<getPlayTime_Result> getPlayTime(Nullable<int> playerCount)
         {

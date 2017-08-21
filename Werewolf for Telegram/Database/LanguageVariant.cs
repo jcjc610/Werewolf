@@ -18,6 +18,7 @@ namespace Database
         public LanguageVariant()
         {
             this.GameGifs = new HashSet<GameGif>();
+            this.LanguageAdmins = new HashSet<LanguageAdmin>();
         }
     
         public int Id { get; set; }
@@ -27,5 +28,7 @@ namespace Database
         public virtual Language Language { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<GameGif> GameGifs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LanguageAdmin> LanguageAdmins { get; set; }
     }
 }

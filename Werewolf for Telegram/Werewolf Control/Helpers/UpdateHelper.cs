@@ -24,6 +24,14 @@ namespace Werewolf_Control.Helpers
             }
         }
 
+        internal static bool IsLanguageAdmin(int id)
+        {
+            using (var db = new Database.WWContext())
+            {
+                return db.LanguageAdmins.Any(x => x.TelegramId == id);
+            }
+        }
+
         internal static bool IsGroupAdmin(int user, long group)
         {
             //fire off admin request

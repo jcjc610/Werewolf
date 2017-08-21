@@ -187,6 +187,9 @@
     <Compile Include="Language.cs">
       <DependentUpon>WerewolfModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="LanguageAdmin.cs">
+      <DependentUpon>WerewolfModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="LanguageVariant.cs">
       <DependentUpon>WerewolfModel.tt</DependentUpon>
     </Compile>

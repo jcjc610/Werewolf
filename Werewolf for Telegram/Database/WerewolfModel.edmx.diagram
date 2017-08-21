@@ -46,6 +46,8 @@
         <AssociationConnector Association="werewolfModel.FK_LanguageVariant_Language" />
         <EntityTypeShape EntityType="werewolfModel.GameGif" Width="1.5" PointX="14.375" PointY="3.75" />
         <AssociationConnector Association="werewolfModel.FK_GameGif_LanguageVariant" />
+        <EntityTypeShape EntityType="werewolfModel.LanguageAdmin" Width="1.5" PointX="18.875" PointY="1.125" />
+        <AssociationConnector Association="werewolfModel.FK_LanguageAdmin_LanguageVariant" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

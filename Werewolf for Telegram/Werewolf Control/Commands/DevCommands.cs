@@ -1363,7 +1363,65 @@ namespace Werewolf_Control
             Bot.Edit(u.Message.Chat.Id, msgid, msg);
         }
 
+        [Attributes.Command(Trigger = "addlangadmin", DevOnly = true)]
+        public static void AddLangAdmin(Update u, string[] args)
+        {
+            int id = 0;
+            string lang;
+            string name;
+            if (u.Message.ReplyToMessage != null)
+            {
+                var m = u.Message.ReplyToMessage;
+                while (m.ReplyToMessage != null)
+                    m = m.ReplyToMessage;
+                //check for forwarded message
+                id = m.From.Id;
+                name = m.From.FirstName;
+                if (m.ForwardFrom != null)
+                {
+                    id = m.ForwardFrom.Id;
+                    name = m.ForwardFrom.FirstName;
+                }
+                if (args.Length < 2 || String.IsNullOrEmpty(args[1]))
+                {
+                    Send("Provide Variant Name.", u.Message.Chat.Id);
+                    return;
+                }
+                lang = String.Join(" ", args.Skip(1).ToArray());
+            }
+            else
+            {
+                if (args.Length < 3 || !int.TryParse(args[1], out id) || String.IsNullOrEmpty(args[2]))
+                {
+                    Send("Provide ID + Variant Name.", u.Message.Chat.Id);
+                    return;
+                }
+                lang = String.Join(" ", args.Skip(2).ToArray());
+            }
+            using (var db = new WWContext())
+            {
+                try
+                {
+                    var variant = db.LanguageVariants.FirstOrDefault(x => x.Name == lang);
+                    if (variant != null)
+                    {
+                        var newadmin = new LanguageAdmin
+                        {
+                            TelegramId = id,
+                            VariantId = variant.Id
+                        };
+                    }
+                    db.SaveChanges();
+                    string toname = name ?? id.ToString();
+                    Send(String.Format("{0} is now a Language Admin For {1}", toname, lang), u.Message.Chat.Id);
+                }
+                catch
+                {
+                    Send("DB error.", u.Message.Chat.Id);
+                }
+            }
+
+        }
+
     }
-
-
 }

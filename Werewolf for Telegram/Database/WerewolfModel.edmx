@@ -254,6 +254,14 @@ warning 6002: The table/view 'werewolf.dbo.GroupAdmin' does not have a primary k
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
         </EntityType>
+        <EntityType Name="LanguageAdmin">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TelegramId" Type="int" Nullable="false" />
+          <Property Name="VariantId" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="LanguageVariant">
           <Key>
             <PropertyRef Name="Id" />
@@ -564,6 +572,18 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_LanguageAdmin_LanguageVariant">
+          <End Role="LanguageVariant" Type="Self.LanguageVariant" Multiplicity="1" />
+          <End Role="LanguageAdmin" Type="Self.LanguageAdmin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LanguageVariant">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LanguageAdmin">
+              <PropertyRef Name="VariantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_LanguageVariant_Language">
           <End Role="Language" Type="Self.Language" Multiplicity="1" />
           <End Role="LanguageVariant" Type="Self.LanguageVariant" Multiplicity="*" />
@@ -635,6 +655,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySet Name="GroupStats" EntityType="Self.GroupStats" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="KillMethod" EntityType="Self.KillMethod" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Language" EntityType="Self.Language" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LanguageAdmin" EntityType="Self.LanguageAdmin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LanguageVariant" EntityType="Self.LanguageVariant" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Player" EntityType="Self.Player" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PlayerStats" EntityType="Self.PlayerStats" Schema="dbo" store:Type="Tables" />
@@ -764,6 +785,10 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <AssociationSet Name="FK_GroupAdmin_Player" Association="Self.FK_GroupAdmin_Player">
             <End Role="Player" EntitySet="Player" />
             <End Role="GroupAdmin" EntitySet="GroupAdmin" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LanguageAdmin_LanguageVariant" Association="Self.FK_LanguageAdmin_LanguageVariant">
+            <End Role="LanguageVariant" EntitySet="LanguageVariant" />
+            <End Role="LanguageAdmin" EntitySet="LanguageAdmin" />
           </AssociationSet>
           <AssociationSet Name="FK_LanguageVariant_Language" Association="Self.FK_LanguageVariant_Language">
             <End Role="Language" EntitySet="Language" />
@@ -1147,6 +1172,11 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             <End Role="LanguageVariant" EntitySet="LanguageVariants" />
             <End Role="GameGif" EntitySet="GameGifs" />
           </AssociationSet>
+          <EntitySet Name="LanguageAdmins" EntityType="werewolfModel.LanguageAdmin" />
+          <AssociationSet Name="FK_LanguageAdmin_LanguageVariant" Association="werewolfModel.FK_LanguageAdmin_LanguageVariant">
+            <End Role="LanguageVariant" EntitySet="LanguageVariants" />
+            <End Role="LanguageAdmin" EntitySet="LanguageAdmins" />
+          </AssociationSet>
         </EntityContainer>
         <ComplexType Name="getPlayTime_Result">
           <Property Type="Int32" Name="Average" Nullable="true" />
@@ -1485,6 +1515,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Language" Relationship="werewolfModel.FK_LanguageVariant_Language" FromRole="LanguageVariant" ToRole="Language" />
           <NavigationProperty Name="GameGifs" Relationship="werewolfModel.FK_GameGif_LanguageVariant" FromRole="LanguageVariant" ToRole="GameGif" />
+          <NavigationProperty Name="LanguageAdmins" Relationship="werewolfModel.FK_LanguageAdmin_LanguageVariant" FromRole="LanguageVariant" ToRole="LanguageAdmin" />
         </EntityType>
         <Association Name="FK_LanguageVariant_Language">
           <End Type="werewolfModel.Language" Role="Language" Multiplicity="1" />
@@ -1525,6 +1556,27 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
               <PropertyRef Name="Id" />
             </Principal>
             <Dependent Role="GameGif">
+              <PropertyRef Name="VariantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="LanguageAdmin">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TelegramId" Type="Int32" Nullable="false" />
+          <Property Name="VariantId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="LanguageVariant" Relationship="werewolfModel.FK_LanguageAdmin_LanguageVariant" FromRole="LanguageAdmin" ToRole="LanguageVariant" />
+        </EntityType>
+        <Association Name="FK_LanguageAdmin_LanguageVariant">
+          <End Type="werewolfModel.LanguageVariant" Role="LanguageVariant" Multiplicity="1" />
+          <End Type="werewolfModel.LanguageAdmin" Role="LanguageAdmin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LanguageVariant">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LanguageAdmin">
               <PropertyRef Name="VariantId" />
             </Dependent>
           </ReferentialConstraint>
@@ -2055,6 +2107,15 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
                 <ScalarProperty Name="StartChaosGame" ColumnName="StartChaosGame" />
                 <ScalarProperty Name="StartGame" ColumnName="StartGame" />
                 <ScalarProperty Name="VariantId" ColumnName="VariantId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LanguageAdmins">
+            <EntityTypeMapping TypeName="werewolfModel.LanguageAdmin">
+              <MappingFragment StoreEntitySet="LanguageAdmin">
+                <ScalarProperty Name="VariantId" ColumnName="VariantId" />
+                <ScalarProperty Name="TelegramId" ColumnName="TelegramId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

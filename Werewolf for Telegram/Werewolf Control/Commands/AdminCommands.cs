@@ -518,6 +518,12 @@ namespace Werewolf_Control
             }
         }
 
+        [Command(Trigger ="langpackgif", LanguageAdminOnly = true)]
+        public static void LangPackGif(Update u, string[] args)
+        {
+            Send("test", u.Message.Chat.Id);
+        }
+
 
     }
 }
