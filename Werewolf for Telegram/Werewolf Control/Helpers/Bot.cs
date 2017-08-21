@@ -85,6 +85,7 @@ namespace Werewolf_Control.Helpers
                         c.DevOnly = ca.DevOnly;
                         c.GlobalAdminOnly = ca.GlobalAdminOnly;
                         c.GroupAdminOnly = ca.GroupAdminOnly;
+                        c.LanguageAdminOnly = ca.LanguageAdminOnly;
                         c.Trigger = ca.Trigger;
                         c.Method = (ChatCommandMethod)Delegate.CreateDelegate(typeof(ChatCommandMethod), m);
                         c.InGroupOnly = ca.InGroupOnly;
