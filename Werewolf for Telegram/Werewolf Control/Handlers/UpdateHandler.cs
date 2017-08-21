@@ -376,10 +376,13 @@ namespace Werewolf_Control.Handler
                                         Send(GetLocaleString("GroupCommandOnly", GetLanguage(id)), id);
                                         return;
                                     }
-                                    if (command.LanguageAdminOnly & !UpdateHelper.Devs.Contains(update.Message.From.Id) & !UpdateHelper.IsGlobalAdmin(update.Message.From.Id) & !UpdateHelper.IsLanguageAdmin(update.Message.From.Id))
+                                    if (command.LanguageAdminOnly)
                                     {
-                                        Send("You are not Language Admin", id);
-                                        return;
+                                        if (!(UpdateHelper.Devs.Contains(update.Message.From.Id) || !UpdateHelper.IsGlobalAdmin(update.Message.From.Id) || UpdateHelper.IsLanguageAdmin(update.Message.From.Id)))
+                                        {
+                                            Send("You are not Language Admin", id);
+                                            return;
+                                        }
                                     }
                                     Bot.CommandsReceived++;
                                     if (update.Message.Chat.Type != ChatType.Private)
