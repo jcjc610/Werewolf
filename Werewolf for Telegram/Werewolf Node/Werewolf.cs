@@ -102,6 +102,7 @@ namespace Werewolf_Node
                             DbGameGif.VillagersWin = DbGameGif.VillagersWin ?? GetRandomImage(Settings.VillagersWin);
                             DbGameGif.WolfWin = DbGameGif.WolfWin ?? GetRandomImage(Settings.WolfWin);
                             DbGameGif.WolvesWin = DbGameGif.WolvesWin ?? GetRandomImage(Settings.WolvesWin);
+                            DbGameGif.VillagerDieBySK = DbGameGif.VillagerDieBySK ?? GetRandomImage(Settings.VillagerDieBySK);
                         }
                     }
                     LoadLanguage(DbGroup.Language);
@@ -836,7 +837,7 @@ namespace Werewolf_Node
             if (id == 0)
                 id = ChatId;
             //Log.WriteLine($"{id} -> {image} {text}");
-#if (DEBUG)
+#if (RELEASE2)
             Send(text, id);
 #else
             Program.Api.SendDocument(id, image, text);
@@ -1240,9 +1241,9 @@ namespace Werewolf_Node
 
 #if DEBUG
                 //force roles for testing
-                rolesToAssign[0] = IRole.WolfCub;
-                rolesToAssign[1] = IRole.WolfCub;
-                //rolesToAssign[2] = IRole.AlphaWolf;
+                rolesToAssign[0] = IRole.SerialKiller;
+                rolesToAssign[1] = IRole.Villager;
+                rolesToAssign[2] = IRole.Villager;
                 //rolesToAssign[3] = IRole.WolfCub;
                 //if (rolesToAssign.Count >= 5)
                 //    rolesToAssign[4] = IRole.Villager;
@@ -2656,6 +2657,9 @@ namespace Werewolf_Node
                         DBKill(sk, skilled, KillMthd.SerialKilled);
                         if (WolfRoles.Contains(skilled.PlayerRole))
                             sk.SerialKilledWolvesCount++;
+                        SendGif(GetLocaleString("SKKilledYou"),
+                            DbGroup.EnableLangPackGif != true ? (GetRandomImage(Settings.VillagerDieBySK)) : DbGameGif.VillagerDieBySK, skilled.Id);
+
                     }
                 }
             }

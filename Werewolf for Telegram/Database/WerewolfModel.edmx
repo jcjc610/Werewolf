@@ -130,6 +130,7 @@
           <Property Name="SerialKillerWins" Type="nvarchar" MaxLength="50" />
           <Property Name="CultWins" Type="nvarchar" MaxLength="50" />
           <Property Name="NoWinner" Type="nvarchar" MaxLength="50" />
+          <Property Name="VillagerDieBySK" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="GameKill">
           <Key>
@@ -1549,6 +1550,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="CultWins" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="NoWinner" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="LanguageVariant" Relationship="werewolfModel.FK_GameGif_LanguageVariant" FromRole="GameGif" ToRole="LanguageVariant" />
+          <Property Name="VillagerDieBySK" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_GameGif_LanguageVariant">
           <End Type="werewolfModel.LanguageVariant" Role="LanguageVariant" Multiplicity="1" />
@@ -2098,6 +2100,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySetMapping Name="GameGifs">
             <EntityTypeMapping TypeName="werewolfModel.GameGif">
               <MappingFragment StoreEntitySet="GameGif">
+                <ScalarProperty Name="VillagerDieBySK" ColumnName="VillagerDieBySK" />
                 <ScalarProperty Name="NoWinner" ColumnName="NoWinner" />
                 <ScalarProperty Name="CultWins" ColumnName="CultWins" />
                 <ScalarProperty Name="SerialKillerWins" ColumnName="SerialKillerWins" />

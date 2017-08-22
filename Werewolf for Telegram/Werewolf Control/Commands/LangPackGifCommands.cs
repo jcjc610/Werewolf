@@ -71,6 +71,9 @@ namespace Werewolf_Control
                     case "skwin":
                         variant.SerialKillerWins = fileid;
                         break;
+                    case "vgkilled":
+                        variant.VillagerDieBySK = fileid;
+                        break;
                 }
                 db.SaveChanges();
                 InlineKeyboardMarkup newmenu = UpdateHandler.GetLangPackGifMenu(message.From.Id, variantchoice);

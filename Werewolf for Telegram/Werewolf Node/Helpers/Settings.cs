@@ -33,6 +33,7 @@ public static List<string> VillagerDieImages = new List<string> { "CgADBQADBwADT
         public static List<string> CultWins = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
         public static List<string> SerialKillerWins = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
         public static List<string> LoversWin = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
+        public static List<string> VillagerDieBySK = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
 #elif RELEASE
         public static List<string> VillagerDieImages = new List<string> { "CgADBAADKgMAAoMbZAeB6WaedzGH2gI", "CgADBAADWAMAAt4cZAdsR41JQEyzzgI" };
         public static List<string> WolfWin = new List<string> { "CgADAwADgQADdBexB96NwT3fKFSoAg", "CgADAwADgAADdBexB1hbmm0m-w8AAQI" };
@@ -45,6 +46,7 @@ public static List<string> VillagerDieImages = new List<string> { "CgADBQADBwADT
         public static List<string> CultWins = new List<string> { "CgADBAADHwsAAgUYZAenff8l98drhgI", "CgADBAADWAMAAosYZAfQnPT3Xp-8LwI" };
         public static List<string> SerialKillerWins = new List<string> { "CgADBAADdQMAAsEcZAc0XumvOhY2kAI", "CgADBAADOAQAAqUXZAfwKDeXc5uodgI" };
         public static List<string> LoversWin = new List<string> { "CgADBAAD8hUAAhYYZAfuiWd1FF4IegI", "CgADBAADYAMAAkMdZAcY4AQhzMPCWQI" };
+        public static List<string> VillagerDieBySK = new List<string> { "CgADBQADBwADTkJ0C8tzjcTmwJJdAg" };
 #elif DEBUG
         public static List<string> VillagerDieImages = new List<string> { "CgADBAADKgMAAoMbZAeB6WaedzGH2gI", "CgADBAADWAMAAt4cZAdsR41JQEyzzgI" };
         public static List<string> WolfWin = new List<string> { "CgADAwADgQADdBexB96NwT3fKFSoAg", "CgADAwADgAADdBexB1hbmm0m-w8AAQI" };
@@ -57,6 +59,7 @@ public static List<string> VillagerDieImages = new List<string> { "CgADBQADBwADT
         public static List<string> CultWins = new List<string> { "CgADBAADHwsAAgUYZAenff8l98drhgI", "CgADBAADWAMAAosYZAfQnPT3Xp-8LwI" };
         public static List<string> SerialKillerWins = new List<string> { "CgADBAADdQMAAsEcZAc0XumvOhY2kAI", "CgADBAADOAQAAqUXZAfwKDeXc5uodgI" };
         public static List<string> LoversWin = new List<string> { "CgADBAAD8hUAAhYYZAfuiWd1FF4IegI", "CgADBAADYAMAAkMdZAcY4AQhzMPCWQI" };
+        public static List<string> VillagerDieBySK = new List<string> { "CgADBAADWgMAAl8dZAcWwtelXjb1KAI" };
 #else
         public static List<string> VillagerDieImages = new List<string> { "CgADBAADKgMAAoMbZAeB6WaedzGH2gI", "CgADBAADWAMAAt4cZAdsR41JQEyzzgI" };
         public static List<string> WolfWin = new List<string> { "CgADAwADgQADdBexB96NwT3fKFSoAg", "CgADAwADgAADdBexB1hbmm0m-w8AAQI" };
@@ -69,6 +72,7 @@ public static List<string> VillagerDieImages = new List<string> { "CgADBQADBwADT
         public static List<string> CultWins = new List<string> { "CgADBAADHwsAAgUYZAenff8l98drhgI", "CgADBAADWAMAAosYZAfQnPT3Xp-8LwI" };
         public static List<string> SerialKillerWins = new List<string> { "CgADBAADdQMAAsEcZAc0XumvOhY2kAI", "CgADBAADOAQAAqUXZAfwKDeXc5uodgI" };
         public static List<string> LoversWin = new List<string> { "CgADBAAD8hUAAhYYZAfuiWd1FF4IegI", "CgADBAADYAMAAkMdZAcY4AQhzMPCWQI" };
+        public static List<string> VillagerDieBySK = new List<string> { "CgADBAADKgMAAoMbZAeB6WaedzGH2gI" };
 
 #endif
 

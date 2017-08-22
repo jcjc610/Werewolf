@@ -27,6 +27,7 @@ namespace Database
         public string SerialKillerWins { get; set; }
         public string CultWins { get; set; }
         public string NoWinner { get; set; }
+        public string VillagerDieBySK { get; set; }
     
         public virtual LanguageVariant LanguageVariant { get; set; }
     }

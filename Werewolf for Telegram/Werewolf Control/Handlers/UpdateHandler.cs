@@ -755,7 +755,7 @@ namespace Werewolf_Control.Handler
                             Bot.Edit(query, "OK.");
                             string giftype = args[3];
                             string msg = "Please send me the new gif file for: ";
-                            var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "noonewin", "startgame", "starchaos" };
+                            var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "noonewin", "startgame", "starchaos", "vgkilled" };
                             switch (giftype)
                             {
                                 case "vgeaten":
@@ -790,6 +790,9 @@ namespace Werewolf_Control.Handler
                                     break;
                                 case "skwin":
                                     msg += "Serial Killer Wins #skwin";
+                                    break;
+                                case "vgkilled":
+                                    msg += "Villager Killed by SK #vgkilled";
                                     break;
                             }
                             msg = $"{msg} ${variantId}";
@@ -1460,7 +1463,7 @@ namespace Werewolf_Control.Handler
                         db.SaveChanges();
                     }
                     variant = db.GameGifs.FirstOrDefault(x => x.VariantId == variantid);
-                    var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "nowinner", "startgame", "startchaos" };
+                    var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "nowinner", "startgame", "startchaos", "vgkilled" };
                     //Villager Eaten
                     buttons.Add(new InlineKeyboardButton("Villager Eaten" + ((variant.VillagerDieImages != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|"+giftypes[0]));
                     //Lone Wolf Wins
@@ -1483,6 +1486,8 @@ namespace Werewolf_Control.Handler
                     buttons.Add(new InlineKeyboardButton("Normal Game Start" + ((variant.StartGame != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[9]));
                     //Chaos Game Start
                     buttons.Add(new InlineKeyboardButton("Chaos Game Start" + ((variant.StartChaosGame != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[10]));
+                    //VG killed by SK
+                    buttons.Add(new InlineKeyboardButton("Village Killed by SK" + ((variant.VillagerDieBySK != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|" + giftypes[11]));
                     var twoMenu = new List<InlineKeyboardButton[]>();
                     for (var i = 0; i < buttons.Count; i++)
                     {
