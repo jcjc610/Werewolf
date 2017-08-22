@@ -1456,7 +1456,7 @@ namespace Werewolf_Control.Handler
                         db.SaveChanges();
                     }
                     variant = db.GameGifs.FirstOrDefault(x => x.VariantId == variantid);
-                    var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "noonewin", "startgame", "starchaos" };
+                    var giftypes = new[] { "vgeaten", "wolfwin", "wolveswin", "vgwin", "tannerwin", "cultwin", "skwin", "loverwin", "nowinner", "startgame", "startchaos" };
                     //Villager Eaten
                     buttons.Add(new InlineKeyboardButton("Villager Eaten" + ((variant.VillagerDieImages != null) ? "✅" : ""), $"langpackgif|{id}|{variantid}|"+giftypes[0]));
                     //Lone Wolf Wins

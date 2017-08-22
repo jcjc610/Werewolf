@@ -68,6 +68,9 @@ namespace Werewolf_Control
                     case "startchaos":
                         variant.StartChaosGame = fileid;
                         break;
+                    case "skwin":
+                        variant.SerialKillerWins = fileid;
+                        break;
                 }
                 db.SaveChanges();
                 InlineKeyboardMarkup newmenu = UpdateHandler.GetLangPackGifMenu(message.From.Id, variantchoice);

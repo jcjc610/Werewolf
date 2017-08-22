@@ -83,7 +83,7 @@ namespace Werewolf_Node
                     Chaos = DbGroup.Mode == "Player" ? chaos : DbGroup.Mode == "Chaos";
 
                     //decide if use langpack gifs or not
-                    UseLangPackGif = DbGroup.EnableLangPackGif == false ? useLangPackGif : true;
+                    UseLangPackGif = DbGroup.EnableLangPackGif != true ? false : true;
                     if (UseLangPackGif)
                     {
                         LanguageVariant variant = null;
