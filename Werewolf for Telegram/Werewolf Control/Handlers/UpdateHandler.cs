@@ -1252,6 +1252,7 @@ namespace Werewolf_Control.Handler
                             menu = new InlineKeyboardMarkup(buttons.Select(x => new[] { x }).ToArray());
                             Bot.ReplyToCallback(query,
                                 GetLocaleString("AllowLangPackGifQ", language, grp.EnableLangPackGif == true ? GetLocaleString("Allow", language) : GetLocaleString("Disallow", language)), replyMarkup: menu);
+
                             break;
                         case "setlanggif":
                             grp.EnableLangPackGif = (choice == "true");
