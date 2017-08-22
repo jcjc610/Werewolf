@@ -788,6 +788,9 @@ namespace Werewolf_Control.Handler
                                 case "startchaos":
                                     msg += "Start Chaos Game #startchaos";
                                     break;
+                                case "skwin":
+                                    msg += "Serial Killer Wins #skwin";
+                                    break;
                             }
                             msg = $"{msg} ${variantId}";
                             Bot.Api.SendTextMessage(query.From.Id, msg, replyMarkup: new ForceReply() { Force = true });
