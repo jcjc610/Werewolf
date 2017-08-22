@@ -1245,6 +1245,21 @@ namespace Werewolf_Control.Handler
                                 GetLocaleString("WhatToDo", language), replyMarkup: GetConfigMenu(groupid));
                             DB.SaveChanges();
                             break;
+                        case "langgif":
+                            buttons.Add(new InlineKeyboardButton(GetLocaleString("Allow", language), $"setlanggif|{groupid}|true"));
+                            buttons.Add(new InlineKeyboardButton(GetLocaleString("Disallow", language), $"setlanggif|{groupid}|false"));
+                            buttons.Add(new InlineKeyboardButton(Cancel, $"setlanggif|{groupid}|cancel"));
+                            menu = new InlineKeyboardMarkup(buttons.Select(x => new[] { x }).ToArray());
+                            Bot.ReplyToCallback(query,
+                                GetLocaleString("AllowLangPackGifQ", language, grp.EnableLangPackGif == true ? GetLocaleString("Allow", language) : GetLocaleString("Disallow", language)), replyMarkup: menu);
+                            break;
+                        case "setlanggif":
+                            grp.EnableLangPackGif = (choice == "true");
+                            Bot.Api.AnswerCallbackQuery(query.Id, GetLocaleString("AllowLangPackGifA", language, grp.EnableLangPackGif == true ? GetLocaleString("Allow", language) : GetLocaleString("Disallow", language)));
+                            Bot.ReplyToCallback(query,
+                                GetLocaleString("WhatToDo", language), replyMarkup: GetConfigMenu(groupid));
+                            DB.SaveChanges();
+                            break;
                         case "maxextend":
                             buttons.Add(new InlineKeyboardButton("60", $"setmaxextend|{groupid}|60"));
                             buttons.Add(new InlineKeyboardButton("120", $"setmaxextend|{groupid}|120"));
@@ -1388,6 +1403,7 @@ namespace Werewolf_Control.Handler
             buttons.Add(new InlineKeyboardButton("Allow Fool", $"fool|{id}"));
             buttons.Add(new InlineKeyboardButton("Allow Tanner", $"tanner|{id}"));
             buttons.Add(new InlineKeyboardButton("Allow Cult", $"cult|{id}"));
+            buttons.Add(new InlineKeyboardButton("Enable LangPack Gifs", $"langgif|{id}"));
             buttons.Add(new InlineKeyboardButton("Done", $"done|{id}"));
             var twoMenu = new List<InlineKeyboardButton[]>();
             for (var i = 0; i < buttons.Count; i++)
