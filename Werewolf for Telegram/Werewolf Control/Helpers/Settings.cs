@@ -38,7 +38,7 @@ namespace Werewolf_Control.Helpers
 #if RELEASE2
         public static List<string> VillagerDieImages = new List<string> { "CgADBAADn58AAm0eZAebrI6GQFzQYwI" };
         public static List<string> WolfWin = new List<string> { "CgADBAADI58AAicaZAeV5IaHAvDlYAI" };
-        public static List<string> WolvesWin = new List<string> { "CgADBAADH6YAArYeZAciua2vIMQ71wI };
+        public static List<string> WolvesWin = new List<string> { "CgADBAADH6YAArYeZAciua2vIMQ71wI" };
         public static List<string> VillagersWin = new List<string> { "CgADBAADD40AAksXZAfqJkdPFUx9pwI" };
         public static List<string> NoWinner = new List<string> { "CgADBAAD8QgAAqIeZAdrpaRWB_YBNAI" };
         public static List<string> StartGame = new List<string> { "CgADBQADawEAArPzsw9LZdsH3rNbkgI" };
@@ -51,7 +51,7 @@ namespace Werewolf_Control.Helpers
 #elif RELEASE
         public static List<string> VillagerDieImages = new List<string> { "CgADBAADn58AAm0eZAebrI6GQFzQYwI" };
         public static List<string> WolfWin = new List<string> { "CgADBAADI58AAicaZAeV5IaHAvDlYAI" };
-        public static List<string> WolvesWin = new List<string> { "CgADBAADH6YAArYeZAciua2vIMQ71wI };
+        public static List<string> WolvesWin = new List<string> { "CgADBAADH6YAArYeZAciua2vIMQ71wI" };
         public static List<string> VillagersWin = new List<string> { "CgADBAADD40AAksXZAfqJkdPFUx9pwI" };
         public static List<string> NoWinner = new List<string> { "CgADBAAD8QgAAqIeZAdrpaRWB_YBNAI" };
         public static List<string> StartGame = new List<string> { "CgADBQADawEAArPzsw9LZdsH3rNbkgI" };
@@ -76,7 +76,7 @@ namespace Werewolf_Control.Helpers
 #else
         public static List<string> VillagerDieImages = new List<string> { "CgADBAADn58AAm0eZAebrI6GQFzQYwI" };
         public static List<string> WolfWin = new List<string> { "CgADBAADI58AAicaZAeV5IaHAvDlYAI" };
-        public static List<string> WolvesWin = new List<string> { "CgADBAADH6YAArYeZAciua2vIMQ71wI };
+        public static List<string> WolvesWin = new List<string> { "CgADBAADH6YAArYeZAciua2vIMQ71wI" };
         public static List<string> VillagersWin = new List<string> { "CgADBAADD40AAksXZAfqJkdPFUx9pwI" };
         public static List<string> NoWinner = new List<string> { "CgADBAAD8QgAAqIeZAdrpaRWB_YBNAI" };
         public static List<string> StartGame = new List<string> { "CgADBQADawEAArPzsw9LZdsH3rNbkgI" };
