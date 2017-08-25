@@ -1285,16 +1285,18 @@ namespace Werewolf_Control.Handler
                             DB.SaveChanges();
                             break;
                         case "secretlynch":
-                            buttons.Add(new InlineKeyboardButton(GetLocaleString("Allow", language), $"setsecretlynch|{groupid}|true"));
+                            buttons.Add(new InlineKeyboardButton(GetLocaleString("SecretLynchA", language), $"setsecretlynch|{groupid}|A"));
+                            buttons.Add(new InlineKeyboardButton(GetLocaleString("SecretLynchB", language), $"setsecretlynch|{groupid}|B"));
                             buttons.Add(new InlineKeyboardButton(GetLocaleString("Disallow", language), $"setsecretlynch|{groupid}|false"));
                             buttons.Add(new InlineKeyboardButton(Cancel, $"setsecretlynch|{groupid}|cancel"));
                             menu = new InlineKeyboardMarkup(buttons.Select(x => new[] { x }).ToArray());
                             Bot.ReplyToCallback(query,
-                                GetLocaleString("EnableSecretLynchQ", language, grp.EnableSecretLynch != true ? GetLocaleString("Disallow", language) : GetLocaleString("Allow", language)), replyMarkup: menu);
+                                GetLocaleString("EnableSecretLynchQ", language, grp.EnableSecretLynch != true ? GetLocaleString("Disallow", language) : (grp.SecretLynchShowVoters != true ? GetLocaleString("SecretLynchA", language) : GetLocaleString("SecretLynchB", language))), replyMarkup: menu);
                             break;
                         case "setsecretlynch":
-                            grp.EnableSecretLynch = (choice == "true");
-                            Bot.Api.AnswerCallbackQuery(query.Id, GetLocaleString("EnableSecretLynchA", language, grp.EnableSecretLynch != true ? GetLocaleString("Disallow", language) : GetLocaleString("Allow", language)));
+                            grp.EnableSecretLynch = !(choice == "false");
+                            grp.SecretLynchShowVoters = (choice == "B");
+                            Bot.Api.AnswerCallbackQuery(query.Id, GetLocaleString("EnableSecretLynchA", language, grp.EnableSecretLynch != true ? GetLocaleString("Disallow", language) : (grp.SecretLynchShowVoters != true ? GetLocaleString("SecretLynchA", language) : GetLocaleString("SecretLynchB", language))));
                             Bot.ReplyToCallback(query,
                                 GetLocaleString("WhatToDo", language), replyMarkup: GetConfigMenu(groupid));
                             DB.SaveChanges();

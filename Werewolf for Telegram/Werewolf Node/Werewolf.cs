@@ -1981,7 +1981,7 @@ namespace Werewolf_Node
                     {
                         target.HasBeenVoted = true;
                         target.Votes++;
-                        if (DbGroup.EnableSecretLynch == true && !target.VotedBy.ContainsKey(p)) // should not contain...
+                        if (DbGroup.EnableSecretLynch == true && DbGroup.SecretLynchShowVoters == true && !target.VotedBy.ContainsKey(p)) // should not contain...
                         {
                             target.VotedBy.Add(p, 1);
                         }
@@ -1989,7 +1989,7 @@ namespace Werewolf_Node
                         {
                             p.MayorLynchAfterRevealCount++;
                             target.Votes++;
-                            if (DbGroup.EnableSecretLynch == true && target.VotedBy.ContainsKey(p)) // now should have contained...
+                            if (DbGroup.EnableSecretLynch == true && DbGroup.SecretLynchShowVoters == true && target.VotedBy.ContainsKey(p)) // now should have contained...
                             {
                                 target.VotedBy[p]++;
                             }
@@ -2056,16 +2056,23 @@ namespace Werewolf_Node
                     {
                         List<string> voterList = new List<string>();
                         string voterNames = "";
-                        if (p.VotedBy.Count == 0)
+                        if (p.Votes == 0)
                             continue; // no one voted this guy
                         else
                         {
-                            foreach (KeyValuePair<IPlayer, int> pp in p.VotedBy)
+                            if (DbGroup.SecretLynchShowVoters == true)
                             {
-                                voterList.Add(pp.Value > 1 ? $"{pp.Key.GetName()} ({pp.Value})" : pp.Key.GetName());
+                                foreach (KeyValuePair<IPlayer, int> pp in p.VotedBy)
+                                {
+                                    voterList.Add(pp.Value > 1 ? $"{pp.Key.GetName()} ({pp.Value})" : pp.Key.GetName());
+                                }
+                                voterNames = String.Join(", ", voterList);
+                                sendMsg += GetLocaleString("SecretLynchResultEach", p.Votes, p.GetName(), voterNames) + "\n";
                             }
-                            voterNames = String.Join(", ", voterList);
-                            sendMsg += GetLocaleString("SecretLynchResultEach", p.Votes, p.GetName(), voterNames) + "\n";
+                            else
+                            {
+                                sendMsg += GetLocaleString("SecretLynchResultNumber", p.Votes, p.GetName()) + "\n";
+                            }
                         }
                     }
                     SendWithQueue(GetLocaleString("SecretLynchResultFull", sendMsg));
