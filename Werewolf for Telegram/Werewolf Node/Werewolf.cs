@@ -795,9 +795,17 @@ namespace Werewolf_Node
 
                 if (player.CurrentQuestion.QType == QuestionType.Lynch)
                 {
-                    var msg = GetLocaleString("PlayerVotedLynch", player.GetName(), target.GetName());
-                    SendWithQueue(msg);
-                    
+                    if (DbGroup.EnableSecretLynch != true)
+                    {
+                        var msg = GetLocaleString("PlayerVotedLynch", player.GetName(), target.GetName());
+                        SendWithQueue(msg);
+                    }
+                    else
+                    {
+                        var msg = GetLocaleString("PlayerVoteCounts", Players.Count(x => !x.IsDead && x.Choice != 0), Players.Count(x => !x.IsDead));
+                        SendWithQueue(msg);
+                    }
+
                     if (NoOneCastLynch)
                     {
                         player.FirstStone++;
@@ -1241,9 +1249,9 @@ namespace Werewolf_Node
 
 #if DEBUG
                 //force roles for testing
-                rolesToAssign[0] = IRole.SerialKiller;
+                rolesToAssign[0] = IRole.Wolf;
                 rolesToAssign[1] = IRole.Villager;
-                rolesToAssign[2] = IRole.Villager;
+                rolesToAssign[2] = IRole.Mayor;
                 //rolesToAssign[3] = IRole.WolfCub;
                 //if (rolesToAssign.Count >= 5)
                 //    rolesToAssign[4] = IRole.Villager;
@@ -1917,7 +1925,10 @@ namespace Werewolf_Node
             Time = GameTime.Lynch;
             if (Players == null) return;
             foreach (var p in Players)
+            {
                 p.CurrentQuestion = null;
+                p.VotedBy.Clear();
+            }
 
             if (CheckForGameEnd()) return;
             SendWithQueue(GetLocaleString("LynchTime", DbGroup.LynchTime.ToBold() ?? Settings.TimeLynch.ToBold()));
@@ -1970,10 +1981,18 @@ namespace Werewolf_Node
                     {
                         target.HasBeenVoted = true;
                         target.Votes++;
+                        if (DbGroup.EnableSecretLynch == true && !target.VotedBy.ContainsKey(p)) // should not contain...
+                        {
+                            target.VotedBy.Add(p, 1);
+                        }
                         if (p.PlayerRole == IRole.Mayor && p.HasUsedAbility) //Mayor counts twice
                         {
                             p.MayorLynchAfterRevealCount++;
                             target.Votes++;
+                            if (DbGroup.EnableSecretLynch == true && target.VotedBy.ContainsKey(p)) // now should have contained...
+                            {
+                                target.VotedBy[p]++;
+                            }
                         }
                         DBAction(p, target, "Lynch");
                     }
@@ -2029,6 +2048,28 @@ namespace Werewolf_Node
                 }
 
                 //Log.WriteLine("lynched Votes = " + lynched.Votes);
+                if (DbGroup.EnableSecretLynch == true)
+                {
+                    string sendMsg = "";
+                    // secret lynch vote results..
+                    foreach (IPlayer p in Players)
+                    {
+                        List<string> voterList = new List<string>();
+                        string voterNames = "";
+                        if (p.VotedBy.Count == 0)
+                            continue; // no one voted this guy
+                        else
+                        {
+                            foreach (KeyValuePair<IPlayer, int> pp in p.VotedBy)
+                            {
+                                voterList.Add(pp.Value > 1 ? $"{pp.Key.GetName()} ({pp.Value})" : pp.Key.GetName());
+                            }
+                            voterNames = String.Join(", ", voterList);
+                            sendMsg += GetLocaleString("SecretLynchResultEach", p.Votes, p.GetName(), voterNames) + "\n";
+                        }
+                    }
+                    SendWithQueue(GetLocaleString("SecretLynchResultFull", sendMsg));
+                }
 
                 if (lynched.Votes > 0)
                 {

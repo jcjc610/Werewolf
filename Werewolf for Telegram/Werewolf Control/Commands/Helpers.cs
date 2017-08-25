@@ -189,6 +189,7 @@ namespace Werewolf_Control
                 CreatedBy = createdBy,
                 AllowExtend = false,
                 MaxExtend = 60,
+                EnableSecretLynch = false,
                 EnableLangPackGif = false
             };
         }

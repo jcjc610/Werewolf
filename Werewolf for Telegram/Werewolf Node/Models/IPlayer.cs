@@ -46,6 +46,8 @@ namespace Werewolf_Node.Models
         /// How many votes against them they have (lynching)
         /// </summary>
         public int Votes { get; set; } = 0;
+        public Dictionary<IPlayer, int> VotedBy = new Dictionary<IPlayer, int>();
+
 
         /// <summary>
         /// For the gunner only
