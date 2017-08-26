@@ -1363,6 +1363,21 @@ namespace Werewolf_Control
             Bot.Edit(u.Message.Chat.Id, msgid, msg);
         }
 
+        [Attributes.Command(Trigger = "fi", DevOnly = true)]
+        public static void FullInfo(Update u, string[] a)
+        {
+            //this is a combo ping and runinfo, with even more information
+            var ts = DateTime.UtcNow - u.Message.Date;
+            var send = DateTime.UtcNow;
+            var msg = "*Run information*\n" + Program.GetFullInfo();
+            msg += $"\n*Time to receive*: {ts:mm\\:ss\\.ff}";
+            var r = Bot.Send(msg, u.Message.Chat.Id, parseMode: ParseMode.Markdown).Result;
+            ts = DateTime.UtcNow - send;
+            msg += $"\n*Time to reply*: {ts:mm\\:ss\\.ff}";
+            Bot.Api.EditMessageText(u.Message.Chat.Id, r.MessageId, msg, parseMode: ParseMode.Markdown);
+        }
+
+
         [Attributes.Command(Trigger = "addlangadmin", DevOnly = true)]
         public static void AddLangAdmin(Update u, string[] args)
         {
