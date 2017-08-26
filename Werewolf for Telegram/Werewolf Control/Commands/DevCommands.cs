@@ -1377,6 +1377,36 @@ namespace Werewolf_Control
             Bot.Api.EditMessageText(u.Message.Chat.Id, r.MessageId, msg, parseMode: ParseMode.Markdown);
         }
 
+        [Attributes.Command(Trigger = "listgames", DevOnly =true)]
+        public static void ListGames(Update u, string[] a)
+        {
+            // try to show all running games across all nodes
+            var msg = "These are the currently running games:\n";
+            if (Bot.Nodes?.Count > 0)
+            {
+                var nodeList = Bot.Nodes.ToList();
+                foreach (Node node in nodeList)
+                {
+                    var nodemsg = $"Node: `{node.ClientId}`\n";
+                    if (node.Games?.Count > 0)
+                    {
+                        var gameList = node.Games.ToList();
+                        foreach (GameInfo gameinfo in gameList)
+                        {
+                            nodemsg += $"*{gameinfo.ChatGroup}*(`{gameinfo.GroupId}`): _{gameinfo.State.ToString()}_ (`{gameinfo.PlayerCount}`)\n";
+                        }
+                    }
+                    else
+                    {
+                        nodemsg += "No games running on this node.\n";
+                    }
+                    msg += nodemsg;
+                    msg += "\n";
+                }
+            }
+            Bot.Send(msg, u.Message.Chat.Id, parseMode: ParseMode.Markdown);
+        }
+
 
         [Attributes.Command(Trigger = "addlangadmin", DevOnly = true)]
         public static void AddLangAdmin(Update u, string[] args)
