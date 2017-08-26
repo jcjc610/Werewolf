@@ -4147,6 +4147,10 @@ namespace Werewolf_Node
         internal void LogException(Exception e)
         {
             Send(Program.Version.FileVersion + $"\nGroup: {ChatId} ({ChatGroup})\nLanguage: {DbGroup?.Language ?? "null"}\n{Program.ClientId}\n{e.Message}\n{e.StackTrace}", Program.ErrorGroup);
+            using (var sw = new StreamWriter(Path.Combine(Program.RootDirectory, "..\\Logs\\nodeerror.log"), true))
+            {
+                sw.WriteLine($"{DateTime.Now} - {e.Message}\n{e.Source}");
+            }
         }
         #endregion
 
