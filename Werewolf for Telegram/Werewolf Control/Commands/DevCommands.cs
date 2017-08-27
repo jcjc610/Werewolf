@@ -619,7 +619,7 @@ namespace Werewolf_Control
                             {
                                 raw += reader[i] + " - ";
                             }
-                            result += raw + Environment.NewLine;
+                            result += raw.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;") + Environment.NewLine;
                             raw = "";
                         }
                     }
@@ -627,7 +627,7 @@ namespace Werewolf_Control
                 }
             }
         }
-
+        
         [Attributes.Command(Trigger = "reloadenglish", DevOnly = true)]
         public static void ReloadEnglish(Update update, string[] args)
         {
