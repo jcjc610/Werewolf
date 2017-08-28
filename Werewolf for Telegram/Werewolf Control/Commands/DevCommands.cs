@@ -257,7 +257,7 @@ namespace Werewolf_Control
             }
         }
 
-        [Attributes.Command(Trigger = "getroles", DevOnly = true)]
+        [Attributes.Command(Trigger = "getroles", GlobalAdminOnly = true)]
         public static void GetRoles(Update update, string[] args)
         {
             if (args.Length > 1)
@@ -1363,7 +1363,7 @@ namespace Werewolf_Control
             Bot.Edit(u.Message.Chat.Id, msgid, msg);
         }
 
-        [Attributes.Command(Trigger = "fi", DevOnly = true)]
+        [Attributes.Command(Trigger = "fi", GlobalAdminOnly = true)]
         public static void FullInfo(Update u, string[] a)
         {
             //this is a combo ping and runinfo, with even more information
@@ -1377,7 +1377,7 @@ namespace Werewolf_Control
             Bot.Api.EditMessageText(u.Message.Chat.Id, r.MessageId, msg, parseMode: ParseMode.Markdown);
         }
 
-        [Attributes.Command(Trigger = "listgames", DevOnly =true)]
+        [Attributes.Command(Trigger = "listgames", GlobalAdminOnly =true)]
         public static void ListGames(Update u, string[] a)
         {
             // try to show all running games across all nodes
