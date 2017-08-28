@@ -476,5 +476,133 @@ namespace Werewolf_Control
             Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html, disableWebPagePreview: true);
             
         }
+
+        [Command(Trigger = "statistics")]
+        public static void GetFullStats(Update u, string[] args)
+        {
+            var name = u.Message.From.FirstName;
+            var id = u.Message.From.Id;
+            var username = u.Message.From.Username;
+            string Content;
+            try
+            {
+                using (var db = new WWContext())
+                {
+                    Content = "";
+                    using (var DB = new WWContext())
+                    {
+                        DB.Database.CommandTimeout = 600;
+                        var gamePlayed = DB.Games.Count();
+                        var night1death = DB.GlobalNight1Death().First();
+                        var day1lynch = DB.GlobalDay1Lynch().First();
+                        var day1death = DB.GlobalDay1Death().First();
+                        var survivor = DB.GlobalSurvivor().First();
+
+
+                        var playersKilled = DB.GamePlayers.Count(x => !x.Survived);
+                        var playersSurvived = DB.GamePlayers.Count(x => x.Survived);
+                        var totalGroups = DB.Groups.Count();
+                        var totalPlayers = DB.Players.Count();
+                        var bestSurvivor = survivor.Name;
+                        var bestSurvivorPercent = (int)survivor.pct;
+                        var bestSurvivorId = survivor.TelegramId;
+                        var mostKilledFirstDay = day1death.Name;
+                        var mostKilledFirstDayPercent = day1death.pct;
+                        var mostKilledFirstDayId = day1death.TelegramId;
+                        var mostKilledFirstNight = night1death.Name;
+                        var mostKilledFirstPercent = night1death.pct;
+                        var mostKilledFirstNightId = night1death.TelegramId;
+                        var mostLynchedFirstDay = day1lynch.Name;
+                        var mostLynchedFirstPercent = day1lynch.pct;
+                        var mostLynchedFirstDayId = day1lynch.TelegramId;
+
+                        Content += $"Total Games: {gamePlayed}\nNo. of Groups: {totalGroups}\nNo. of Players: {totalPlayers}\n";
+                        Content += $"Best Survivor: {bestSurvivor} ({bestSurvivorPercent}%)\nMost Killed 1st Night: {mostKilledFirstNight} ({mostKilledFirstPercent}%)\n";
+                        Content += $"Most Lynched 1st Day: {mostLynchedFirstDay} ({mostLynchedFirstPercent}%)";
+
+                        /* later
+                        if (u.Message.Chat.Id < 0)
+                        {
+                            // group
+                            var groupid = u.Message.Chat.Id;
+                            var grp = db.Groups.FirstOrDefault(x => x.GroupId == groupid);
+
+                            Content += $"\nGroup Stats for {u.Message.Chat.Title}:\n";
+
+                            var runStats = false;
+
+                            //first, check that we should even run stats on this group
+                            var stat = db.GroupStats.FirstOrDefault(x => x.GroupId == groupid);
+
+                            if (stat == null)
+                                runStats = true;
+                            else
+                            {
+                                if ((grp.Games.OrderByDescending(x => x.TimeEnded).FirstOrDefault()?.TimeEnded ??
+                                     DateTime.MinValue) > (stat.LastRun ?? DateTime.MinValue.AddSeconds(1)))
+                                {
+                                    runStats = true;
+                                }
+                            }
+
+                            if (!runStats)
+                            {
+                                // later
+                            }
+                            var gamesPlayed = grp.Games.Count;
+                            night1death = db.GroupNight1Death(groupid).FirstOrDefault();
+                            day1lynch = db.GroupDay1Lynch(groupid).FirstOrDefault();
+                            day1death = db.GroupDay1Death(groupid).FirstOrDefault();
+                            survivor = db.GroupSurvivor(groupid).FirstOrDefault();
+
+                            if (stat == null)
+                            {
+                                stat = db.GroupStats.Create();
+                                stat.GroupId = groupid;
+                                db.GroupStats.Add(stat);
+                            }
+
+                            stat.GroupName = grp.Name;
+                            //TODO add this metric later
+                            //stat.PlayersKilled = db.GamePlayers.Count(x => !x.Survived);
+                            //stat.PlayersSurvived = db.GamePlayers.Count(x => x.Survived);
+
+                            if (survivor != null)
+                            {
+                                stat.BestSurvivor = survivor.Name;
+                                stat.BestSurvivorPercent = (int)survivor.pct;
+                            }
+                            stat.GamesPlayed = gamesPlayed;
+                            stat.LastRun = DateTime.Now;
+                            if (day1death != null)
+                            {
+                                stat.MostDeadFirstDay = day1death.Name;
+                                stat.MostDeadFirstPercent = day1death.pct;
+                            }
+                            if (night1death != null)
+                            {
+                                stat.MostKilledFirstNight = night1death.Name;
+                                stat.MostKilledFirstPercent = night1death.pct;
+                            }
+                            if (day1lynch != null)
+                            {
+                                stat.MostLynchedFirstNight = day1lynch.Name;
+                                stat.MostLynchFirstPercent = day1lynch.pct;
+                            }
+
+
+                        }
+                        later */
+                        // DB.SaveChanges();
+                        Console.WriteLine("Done");
+                        Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, replyToMessageId: u.Message.MessageId);
+                    }
+                }
+            }
+            catch
+            {
+                // nothing
+            }
+        }
     }
 }
