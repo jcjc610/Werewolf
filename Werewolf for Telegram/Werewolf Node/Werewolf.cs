@@ -21,7 +21,7 @@ namespace Werewolf_Node
     class Werewolf : IDisposable
     {
         public long ChatId;
-        public int GameDay, GameId, 
+        public int GameDay, GameId,
             SecondsToAdd = 0;
         public List<IPlayer> Players = new List<IPlayer>();
         public bool IsRunning,
@@ -91,18 +91,40 @@ namespace Werewolf_Node
                         if (variant != null)
                         {
                             DbGameGif = db.GameGifs.FirstOrDefault(x => x.VariantId == variant.Id);
-                            DbGameGif.CultWins = DbGameGif.CultWins ?? GetRandomImage(Settings.CultWins);
-                            DbGameGif.LoversWin = DbGameGif.LoversWin ?? GetRandomImage(Settings.LoversWin);
-                            DbGameGif.NoWinner = DbGameGif.NoWinner ?? GetRandomImage(Settings.NoWinner);
-                            DbGameGif.SerialKillerWins = DbGameGif.SerialKillerWins ?? GetRandomImage(Settings.SerialKillerWins);
-                            DbGameGif.StartChaosGame = DbGameGif.StartChaosGame ?? GetRandomImage(Settings.StartChaosGame);
-                            DbGameGif.StartGame = DbGameGif.StartGame ?? GetRandomImage(Settings.StartGame);
-                            DbGameGif.TannerWin = DbGameGif.TannerWin ?? GetRandomImage(Settings.TannerWin);
-                            DbGameGif.VillagerDieImages = DbGameGif.VillagerDieImages ?? GetRandomImage(Settings.VillagerDieImages);
-                            DbGameGif.VillagersWin = DbGameGif.VillagersWin ?? GetRandomImage(Settings.VillagersWin);
-                            DbGameGif.WolfWin = DbGameGif.WolfWin ?? GetRandomImage(Settings.WolfWin);
-                            DbGameGif.WolvesWin = DbGameGif.WolvesWin ?? GetRandomImage(Settings.WolvesWin);
-                            DbGameGif.VillagerDieBySK = DbGameGif.VillagerDieBySK ?? GetRandomImage(Settings.VillagerDieBySK);
+                            if (DbGameGif != null)
+                            {
+                                DbGameGif.CultWins = DbGameGif.CultWins ?? GetRandomImage(Settings.CultWins);
+                                DbGameGif.LoversWin = DbGameGif.LoversWin ?? GetRandomImage(Settings.LoversWin);
+                                DbGameGif.NoWinner = DbGameGif.NoWinner ?? GetRandomImage(Settings.NoWinner);
+                                DbGameGif.SerialKillerWins = DbGameGif.SerialKillerWins ?? GetRandomImage(Settings.SerialKillerWins);
+                                DbGameGif.StartChaosGame = DbGameGif.StartChaosGame ?? GetRandomImage(Settings.StartChaosGame);
+                                DbGameGif.StartGame = DbGameGif.StartGame ?? GetRandomImage(Settings.StartGame);
+                                DbGameGif.TannerWin = DbGameGif.TannerWin ?? GetRandomImage(Settings.TannerWin);
+                                DbGameGif.VillagerDieImages = DbGameGif.VillagerDieImages ?? GetRandomImage(Settings.VillagerDieImages);
+                                DbGameGif.VillagersWin = DbGameGif.VillagersWin ?? GetRandomImage(Settings.VillagersWin);
+                                DbGameGif.WolfWin = DbGameGif.WolfWin ?? GetRandomImage(Settings.WolfWin);
+                                DbGameGif.WolvesWin = DbGameGif.WolvesWin ?? GetRandomImage(Settings.WolvesWin);
+                                DbGameGif.VillagerDieBySK = DbGameGif.VillagerDieBySK ?? GetRandomImage(Settings.VillagerDieBySK);
+
+                            }
+                            else
+                            {
+                                DbGameGif = new GameGif()
+                                {
+                                    CultWins = GetRandomImage(Settings.CultWins),
+                                    LoversWin = GetRandomImage(Settings.LoversWin),
+                                    NoWinner = GetRandomImage(Settings.NoWinner),
+                                    SerialKillerWins = GetRandomImage(Settings.SerialKillerWins),
+                                    StartChaosGame = GetRandomImage(Settings.StartChaosGame),
+                                    StartGame = GetRandomImage(Settings.StartGame),
+                                    TannerWin = GetRandomImage(Settings.TannerWin),
+                                    VillagerDieImages = GetRandomImage(Settings.VillagerDieImages),
+                                    VillagersWin = GetRandomImage(Settings.VillagersWin),
+                                    WolfWin = GetRandomImage(Settings.WolfWin),
+                                    WolvesWin = GetRandomImage(Settings.WolvesWin),
+                                    VillagerDieBySK = GetRandomImage(Settings.VillagerDieBySK)
+                                };
+                            }
                         }
                     }
                     LoadLanguage(DbGroup.Language);
@@ -257,7 +279,7 @@ namespace Werewolf_Node
                         var msg = "";
                         var remaining = TimeSpan.FromSeconds(Settings.GameJoinTime - i);
                         if (SecondsToAdd > 0)
-                             msg = GetLocaleString("SecondsAdded", SecondsToAdd.ToString().ToBold(), remaining.ToString(@"mm\:ss").ToBold());
+                            msg = GetLocaleString("SecondsAdded", SecondsToAdd.ToString().ToBold(), remaining.ToString(@"mm\:ss").ToBold());
                         else
                         {
                             SecondsToAdd = -SecondsToAdd;
@@ -1035,7 +1057,7 @@ namespace Werewolf_Node
                 new Thread(() =>
                 {
                     //Thread.Sleep(4500); //wait a moment before sending
-                    
+
                     var msg = "";
                     if (joining)
                     {
@@ -1069,7 +1091,7 @@ namespace Werewolf_Node
         {
             if (!((DateTime.Now - LastPlayersOutput).TotalSeconds > (10))) return;
             LastPlayersOutput = DateTime.Now;
-            Program.Api.SendTextMessage(ChatId, GetLocaleString(_playerListId != 0?"LatestList": "UnableToGetList"), replyToMessageId: _playerListId);
+            Program.Api.SendTextMessage(ChatId, GetLocaleString(_playerListId != 0 ? "LatestList" : "UnableToGetList"), replyToMessageId: _playerListId);
         }
         #endregion
 
@@ -1116,7 +1138,7 @@ namespace Werewolf_Node
                         break;
                 }
             }
-            
+
             //we want the possibility to have normal wolves too!
             if (!rolesToAssign.Contains(IRole.Wolf))
             {
@@ -1218,8 +1240,8 @@ namespace Werewolf_Node
                     if (
                         rolesToAssign.Any(x => !nonVgRoles.Contains(x)) //make sure we have VGs
                         && rolesToAssign.Any(x => nonVgRoles.Contains(x) && x != IRole.Sorcerer && x != IRole.Tanner) //make sure we have at least one enemy
-                    ) 
-                        balanced = true; 
+                    )
+                        balanced = true;
                     //else, redo role assignment. better to rely on randomness, than trying to fix it
 
                     //the roles to assign are good, now if it's not a chaos game we need to check if they're balanced
@@ -1466,7 +1488,7 @@ namespace Werewolf_Node
                 }
             }
 
-            var seers = Players.GetPlayersForRoles(new[] {IRole.Seer});
+            var seers = Players.GetPlayersForRoles(new[] { IRole.Seer });
             if (seers.Count() > 1)
             {
                 foreach (var s in seers)
@@ -1679,7 +1701,7 @@ namespace Werewolf_Node
                     }
                     p.ChangedRolesCount++;
 
-                    if (!new[] { IRole.Mason , IRole.Wolf , IRole.AlphaWolf, IRole.WolfCub , IRole.Cultist , IRole.WildChild }.Contains(p.PlayerRole))
+                    if (!new[] { IRole.Mason, IRole.Wolf, IRole.AlphaWolf, IRole.WolfCub, IRole.Cultist, IRole.WildChild }.Contains(p.PlayerRole))
                     {
                         //tell them their new role
                         Send(GetRoleInfo(p.PlayerRole), p.Id);
@@ -1850,7 +1872,7 @@ namespace Werewolf_Node
                             throw new ArgumentOutOfRangeException();
                     }
 
-                    
+
                 }
             }
         }
@@ -2094,7 +2116,7 @@ namespace Werewolf_Node
                         if (lynched.PlayerRole == IRole.Prince && lynched.HasUsedAbility)
                             AddAchievement(lynched, Achievements.SpoiledRichBrat);
                         SendWithQueue(GetLocaleString("LynchKill", lynched.GetName(), DbGroup.ShowRoles == false ? "" : $"{lynched.GetName()} {GetLocaleString("Was")} {GetDescription(lynched.PlayerRole)}"));
-                        
+
                         if (lynched.InLove)
                             KillLover(lynched);
 
@@ -2116,7 +2138,7 @@ namespace Werewolf_Node
                                 HunterFinalShot(lynched, KillMthd.Lynch);
                                 break;
                         }
-                        
+
                         //update the database
                         DBKill(Players.Where(x => x.Choice == lynched.Id), lynched, KillMthd.Lynch);
 
@@ -2316,7 +2338,7 @@ namespace Werewolf_Node
                     }
                     Players.GetPlayerForRole(IRole.AlphaWolf, false).AlphaConvertCount++;
                     Send(msg, p.Id);
-                    
+
                 }
             }
             CheckRoleChanges();     //so maybe if seer got converted to wolf, appseer will promote here
@@ -2422,7 +2444,7 @@ namespace Werewolf_Node
                 }
                 choices.Add(Players.Where(x => x.Votes > 0).OrderByDescending(x => x.Votes).FirstOrDefault()?.Id ?? 0);
 
-                
+
                 //choice2 (will be 0 if wolfcub wasn't killed)
                 foreach (var p in Players)
                     p.Votes = 0;
@@ -2443,7 +2465,7 @@ namespace Werewolf_Node
                     if (target != null)
                     {
                         target.BeingVisitedSameNightCount++;
-                        if (ga?.Choice == target.Id && 
+                        if (ga?.Choice == target.Id &&
                             !(target.PlayerRole == IRole.Harlot && (target.Choice == 0 || target.Choice == -1))) //doesn't apply to harlot not home
                         {
                             foreach (var wolf in voteWolves)
@@ -2525,7 +2547,7 @@ namespace Werewolf_Node
                                             var secondvictim = Players.FirstOrDefault(x => x.Id == choices[1]);
                                             Send(
                                                 target != (secondvictim ?? target) ? //if the drunk is the first victim out of two, they block the second one. let's tell wolves
-                                                GetLocaleString("WolvesEatDrunkBlockSecondKill", target.GetName(), secondvictim.GetName()) : 
+                                                GetLocaleString("WolvesEatDrunkBlockSecondKill", target.GetName(), secondvictim.GetName()) :
                                                 GetLocaleString("WolvesEatDrunk", target.GetName()), w.Id);
                                             w.Drunk = true;
                                         }
@@ -3090,7 +3112,7 @@ namespace Werewolf_Node
                             break;
                     }
                 }
-                
+
             }
             var fool = Players.FirstOrDefault(x => x.PlayerRole == IRole.Fool && !x.IsDead);
             if (fool != null)
@@ -3539,7 +3561,7 @@ namespace Werewolf_Node
                         //the winning tanner is the only one with DiedLastNight == true
                         if (team == ITeam.Tanner && !w.DiedLastNight)
                             continue;
-                        
+
                         w.Won = true;
                         var p = GetDBGamePlayer(w, db);
                         p.Won = true;
@@ -4256,7 +4278,7 @@ namespace Werewolf_Node
                 else if (WolfRoles.Contains(killer.PlayerRole)) //wolf pack killed lover, not on first night
                     AddAchievement(killer, Achievements.ShouldveMentioned);
             }
-                
+
         }
 
         private void KillLover(IPlayer victim)
