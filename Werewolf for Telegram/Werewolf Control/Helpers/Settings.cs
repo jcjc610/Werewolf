@@ -14,7 +14,7 @@ namespace Werewolf_Control.Helpers
 #if DEBUG
         public static int Port = 9049;
         public static int AdminPort = 9059;
-#elif RELEASE
+#elif RELEASED:\Documents\SilasWW\Werewolf\Werewolf for Telegram\Werewolf Control\Helpers\Settings.cs
         public static int Port = 9050;  //9050-@werewolfbot 
         public static int AdminPort = 9060;
 #elif RELEASE2
@@ -92,17 +92,17 @@ namespace Werewolf_Control.Helpers
         /// <summary>
         /// How many games are allowed for any given node
         /// </summary>
-        public static int MaxGamesPerNode = 60;
+        public static int MaxGamesPerNode = 3;
 
         /// <summary>
         /// How many games on each node before starting a new node (to be added later)
         /// </summary>
 #if DEBUG
-        public static int NewNodeThreshhold = 10;
+        public static int NewNodeThreshhold = 1;
 #else
-        public static int NewNodeThreshhold = 30;
+        public static int NewNodeThreshhold = 1;
 #endif
-        public static int ShutDownNodesAt = 15;
+        public static int ShutDownNodesAt = 2;
 
         public static int
 #if DEBUG
