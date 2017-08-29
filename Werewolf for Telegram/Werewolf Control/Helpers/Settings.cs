@@ -14,7 +14,7 @@ namespace Werewolf_Control.Helpers
 #if DEBUG
         public static int Port = 9049;
         public static int AdminPort = 9059;
-#elif RELEASED:\Documents\SilasWW\Werewolf\Werewolf for Telegram\Werewolf Control\Helpers\Settings.cs
+#elif RELEASE
         public static int Port = 9050;  //9050-@werewolfbot 
         public static int AdminPort = 9060;
 #elif RELEASE2
