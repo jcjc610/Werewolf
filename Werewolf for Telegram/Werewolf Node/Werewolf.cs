@@ -546,7 +546,8 @@ namespace Werewolf_Node
                 try
                 {
                     // ReSharper disable once UnusedVariable
-                    var result = Send(GetLocaleString("YouJoined", ChatGroup.FormatHTML()), u.Id).Result;
+                    var groupname = String.IsNullOrWhiteSpace(DbGroup.GroupLink) ? ChatGroup.FormatHTML() : $"<a href='{DbGroup.GroupLink}'>{ChatGroup.FormatHTML()}</a>";
+                    var result = Send(GetLocaleString("YouJoined", groupname), u.Id).Result;
                 }
                 catch (Exception)
                 {
