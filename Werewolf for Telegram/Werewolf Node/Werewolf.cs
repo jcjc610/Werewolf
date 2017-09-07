@@ -2994,7 +2994,6 @@ namespace Werewolf_Node
                 var target = Players.FirstOrDefault(x => x.Id == harlot.Choice);
                 if (target != null)
                 {
-                    DBAction(harlot, target, "Fuck");
                     if (harlot.PlayersVisited.Contains(target.TeleUser.Id))
                         harlot.HasRepeatedVisit = true;
 
@@ -3021,6 +3020,7 @@ namespace Werewolf_Node
                                 harlot.DiedByVisitingKiller = true;
                                 harlot.KilledByRole = IRole.Wolf;
                                 DBKill(target, harlot, KillMthd.VisitWolf);
+                                DBAction(harlot, target, "FuckWolf");
                                 Send(GetLocaleString("HarlotFuckWolf", target.GetName()), harlot.Id);
                                 break;
                             case IRole.SerialKiller:
@@ -3030,6 +3030,7 @@ namespace Werewolf_Node
                                 harlot.DiedByVisitingKiller = true;
                                 harlot.KilledByRole = IRole.SerialKiller;
                                 DBKill(target, harlot, KillMthd.VisitKiller);
+                                DBAction(harlot, target, "FuckSK");
                                 Send(GetLocaleString("HarlotFuckKiller", target.GetName()), harlot.Id);
                                 break;
                             default:
@@ -3041,6 +3042,7 @@ namespace Werewolf_Node
                                     harlot.DiedByVisitingVictim = true;
                                     harlot.KilledByRole = target.KilledByRole;
                                     harlot.RoleModel = target.Id; //store who they visited
+                                    DBAction(harlot, target, "Fuck");
                                     DBKill(target, harlot, KillMthd.VisitVictim);
                                 }
                                 else
@@ -3052,6 +3054,7 @@ namespace Werewolf_Node
                                         harlot.Id);
                                     if (!target.IsDead)
                                         Send(GetLocaleString("HarlotVisitYou"), target.Id);
+                                    DBAction(harlot, target, "Fuck");
                                 }
                                 break;
                         }
@@ -3157,17 +3160,19 @@ namespace Werewolf_Node
                 var save = Players.FirstOrDefault(x => x.Id == ga.Choice);
                 if (save != null)
                 {
-                    if (save != null)
-                        DBAction(ga, save, "Guard");
+                    //if (save != null)
+                    //    DBAction(ga, save, "Guard");
 
                     save.BeingVisitedSameNightCount++;
                     if (save.WasSavedLastNight)
                     {
+                        DBAction(ga, save, "GuardSuccess");
                         Send(GetLocaleString("GuardSaved", save.GetName()), ga.Id);
                         Send(GetLocaleString("GuardSavedYou"), save.Id);
                     }
                     else if (save.DiedLastNight)
                     {
+                        DBAction(ga, save, "Guard");
                         Send(GetLocaleString("GuardEmptyHouse", save.GetName()), ga.Id);
                     }
 
@@ -3179,6 +3184,7 @@ namespace Werewolf_Node
                         case IRole.Wolf:
                             if (Program.R.Next(100) > 50)
                             {
+                                DBAction(ga, save, "GuardWolf");
                                 ga.IsDead = true;
                                 ga.TimeDied = DateTime.Now;
                                 ga.DiedLastNight = true;
@@ -3190,11 +3196,13 @@ namespace Werewolf_Node
                             else if (!save.WasSavedLastNight && !save.DiedLastNight)
                             //only send if GA survived and wolf wasn't attacked
                             {
+                                DBAction(ga, save, "Guard");
                                 Send(GetLocaleString("GuardNoAttack", save.GetName()), ga.Id);
                                 ga.GAGuardWolfCount++;
                             }
                             break;
                         case IRole.SerialKiller:
+                            DBAction(ga, save, "GuardSK");
                             ga.IsDead = true;
                             ga.TimeDied = DateTime.Now;
                             ga.DiedLastNight = true;
@@ -3205,7 +3213,10 @@ namespace Werewolf_Node
                             break;
                         default:
                             if (!save.WasSavedLastNight && !save.DiedLastNight) //only send if save wasn't attacked
+                            {
+                                DBAction(ga, save, "Guard");
                                 Send(GetLocaleString("GuardNoAttack", save.GetName()), ga.Id);
+                            }
                             break;
                     }
 
