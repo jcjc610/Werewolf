@@ -2419,19 +2419,19 @@ namespace Werewolf_Node
 
             if (voteWolves.Any())
             {
-                //foreach (var w in voteWolves)
-                //{
-                //    var wchoice = Players.FirstOrDefault(x => x.Id == w.Choice);
-                //    if (wchoice != null)
-                //    {
-                //        DBAction(w, wchoice, "Eat");
-                //    }
-                //    wchoice = Players.FirstOrDefault(x => x.Id == w.Choice2);
-                //    if (wchoice != null)
-                //    {
-                //        DBAction(w, wchoice, "Eat");
-                //    }
-                //}
+                foreach (var w in voteWolves)
+                {
+                    var wchoice = Players.FirstOrDefault(x => x.Id == w.Choice);
+                    if (wchoice != null)
+                    {
+                        DBAction(w, wchoice, "Eat");
+                    }
+                    wchoice = Players.FirstOrDefault(x => x.Id == w.Choice2);
+                    if (wchoice != null)
+                    {
+                        DBAction(w, wchoice, "Eat");
+                    }
+                }
                 var votechoice = voteWolves.Where(x => (x.Choice != 0 && x.Choice != -1) || (x.Choice2 != 0 && x.Choice2 != -1));
 
                 List<int> choices = new List<int>();
@@ -2710,6 +2710,7 @@ namespace Werewolf_Node
                 var skilled = Players.FirstOrDefault(x => x.Id == sk.Choice && !x.IsDead);
                 if (skilled != null)
                 {
+                    DBAction(sk, skilled, "Kill");
                     skilled.BeingVisitedSameNightCount++;
                     if (ga?.Choice == skilled.Id)
                     {
@@ -3156,8 +3157,8 @@ namespace Werewolf_Node
                 var save = Players.FirstOrDefault(x => x.Id == ga.Choice);
                 if (save != null)
                 {
-                    //if (save != null)
-                    //    DBAction(ga, save, "Guard");
+                    if (save != null)
+                        DBAction(ga, save, "Guard");
 
                     save.BeingVisitedSameNightCount++;
                     if (save.WasSavedLastNight)
