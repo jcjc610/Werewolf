@@ -2187,7 +2187,7 @@ namespace Werewolf_Node
             if (Players == null) return;
             foreach (var p in Players)
                 p.CurrentQuestion = null;
-            var timeToAdd = Math.Min(((Players.Count(x => !x.IsDead) / 5) - 1) * 30, 60);
+            var timeToAdd = Math.Min(Math.Max(((Players.Count(x => !x.IsDead) / 5) - 1), 0) * 30, 60);
 #if DEBUG
             Settings.TimeDay = 20;
             timeToAdd = 0;
@@ -2198,7 +2198,7 @@ namespace Werewolf_Node
 
             SendDayActions();
             //incremental sleep time for large players....
-            Thread.Sleep(TimeSpan.FromSeconds((DbGroup.LynchTime ?? Settings.TimeLynch) + timeToAdd));
+            Thread.Sleep(TimeSpan.FromSeconds((DbGroup.DayTime ?? Settings.TimeDay) + timeToAdd));
 
             if (!IsRunning) return;
             try
