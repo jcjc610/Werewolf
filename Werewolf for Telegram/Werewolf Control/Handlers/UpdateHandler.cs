@@ -1135,10 +1135,10 @@ namespace Werewolf_Control.Handler
                             DB.SaveChanges();
                             break;
                         case "day":
-                            buttons.Add(new InlineKeyboardButton("90", $"setday|{groupid}|30"));
-                            buttons.Add(new InlineKeyboardButton("120", $"setday|{groupid}|60"));
-                            buttons.Add(new InlineKeyboardButton("150", $"setday|{groupid}|90"));
-                            buttons.Add(new InlineKeyboardButton("180", $"setday|{groupid}|120"));
+                            buttons.Add(new InlineKeyboardButton("30", $"setday|{groupid}|30"));
+                            buttons.Add(new InlineKeyboardButton("60", $"setday|{groupid}|60"));
+                            buttons.Add(new InlineKeyboardButton("90", $"setday|{groupid}|90"));
+                            buttons.Add(new InlineKeyboardButton("120", $"setday|{groupid}|120"));
                             buttons.Add(new InlineKeyboardButton(Cancel, $"setday|{groupid}|cancel"));
                             menu = new InlineKeyboardMarkup(buttons.Select(x => new[] { x }).ToArray());
                             Bot.ReplyToCallback(query,

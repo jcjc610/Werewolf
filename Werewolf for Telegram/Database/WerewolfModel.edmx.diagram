@@ -48,6 +48,10 @@
         <AssociationConnector Association="werewolfModel.FK_GameGif_LanguageVariant" />
         <EntityTypeShape EntityType="werewolfModel.LanguageAdmin" Width="1.5" PointX="18.875" PointY="1.125" />
         <AssociationConnector Association="werewolfModel.FK_LanguageAdmin_LanguageVariant" />
+        <EntityTypeShape EntityType="werewolfModel.Action" Width="1.5" PointX="8.25" PointY="15.625" />
+        <AssociationConnector Association="werewolfModel.FK_Action_Game" />
+        <AssociationConnector Association="werewolfModel.FK_Action_Initiator" />
+        <AssociationConnector Association="werewolfModel.FK_Action_Receiver" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -71,6 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Achievements.cs" />
+    <Compile Include="Action.cs">
+      <DependentUpon>WerewolfModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Admin.cs">
       <DependentUpon>WerewolfModel.tt</DependentUpon>
     </Compile>

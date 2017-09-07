@@ -33,6 +33,18 @@
           <Property Name="BanDate" Type="datetime" />
           <Property Name="Name" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="Action">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="GameId" Type="int" Nullable="false" />
+          <Property Name="TimeStamp" Type="datetime" Nullable="false" />
+          <Property Name="InitiatorId" Type="int" Nullable="false" />
+          <Property Name="ReceiverId" Type="int" Nullable="false" />
+          <Property Name="ActionTaken" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Day" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="Admin">
           <Key>
             <PropertyRef Name="UserId" />
@@ -411,6 +423,42 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
           <Property Name="UserName" Type="nvarchar(max)" />
         </EntityType>
+        <Association Name="FK_Action_Game">
+          <End Role="Game" Type="Self.Game" Multiplicity="1" />
+          <End Role="Action" Type="Self.Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Action">
+              <PropertyRef Name="GameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Action_Initiator">
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
+          <End Role="Action" Type="Self.Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Action">
+              <PropertyRef Name="InitiatorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Action_Receiver">
+          <End Role="Player" Type="Self.Player" Multiplicity="1" />
+          <End Role="Action" Type="Self.Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Action">
+              <PropertyRef Name="ReceiverId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -642,6 +690,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySet Name="BotStatus" EntityType="Self.BotStatus" Schema="db_owner" store:Type="Tables" />
           <EntitySet Name="ContestTerms" EntityType="Self.ContestTerms" Schema="db_owner" store:Type="Tables" />
           <EntitySet Name="GlobalBan" EntityType="Self.GlobalBan" Schema="db_owner" store:Type="Tables" />
+          <EntitySet Name="Action" EntityType="Self.Action" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -737,6 +786,18 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
     [v_IdleKill24HoursMain].[UserName] AS [UserName]
     FROM [dbo].[v_IdleKill24HoursMain] AS [v_IdleKill24HoursMain]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_Action_Game" Association="Self.FK_Action_Game">
+            <End Role="Game" EntitySet="Game" />
+            <End Role="Action" EntitySet="Action" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Action_Initiator" Association="Self.FK_Action_Initiator">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Action" EntitySet="Action" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Action_Receiver" Association="Self.FK_Action_Receiver">
+            <End Role="Player" EntitySet="Player" />
+            <End Role="Action" EntitySet="Action" />
+          </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -823,6 +884,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <NavigationProperty Name="GameKills" Relationship="Self.FK_GameKill_Game" FromRole="Game" ToRole="GameKill" />
           <Property Name="Mode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="GamePlayers" Relationship="werewolfModel.FK_GamePlayer_Game" FromRole="Game" ToRole="GamePlayer" />
+          <NavigationProperty Name="Actions" Relationship="werewolfModel.FK_Action_Game" FromRole="Game" ToRole="Action" />
         </EntityType>
         <EntityType Name="GameKill">
           <Key>
@@ -926,6 +988,8 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="Founder" Type="Boolean" />
           <Property Name="CustomGifSet" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="GifPurchased" Type="Boolean" />
+          <NavigationProperty Name="Actions" Relationship="werewolfModel.FK_Action_Initiator" FromRole="Player" ToRole="Action" />
+          <NavigationProperty Name="Actions1" Relationship="werewolfModel.FK_Action_Receiver" FromRole="Player" ToRole="Action" />
         </EntityType>
         <EntityType Name="NotifyGame">
           <Key>
@@ -1181,6 +1245,19 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <AssociationSet Name="FK_LanguageAdmin_LanguageVariant" Association="werewolfModel.FK_LanguageAdmin_LanguageVariant">
             <End Role="LanguageVariant" EntitySet="LanguageVariants" />
             <End Role="LanguageAdmin" EntitySet="LanguageAdmins" />
+          </AssociationSet>
+          <EntitySet Name="Actions" EntityType="werewolfModel.Action" />
+          <AssociationSet Name="FK_Action_Game" Association="werewolfModel.FK_Action_Game">
+            <End Role="Game" EntitySet="Games" />
+            <End Role="Action" EntitySet="Actions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Action_Initiator" Association="werewolfModel.FK_Action_Initiator">
+            <End Role="Player" EntitySet="Players" />
+            <End Role="Action" EntitySet="Actions" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Action_Receiver" Association="werewolfModel.FK_Action_Receiver">
+            <End Role="Player" EntitySet="Players" />
+            <End Role="Action" EntitySet="Actions" />
           </AssociationSet>
         </EntityContainer>
         <ComplexType Name="getPlayTime_Result">
@@ -1584,6 +1661,57 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Principal>
             <Dependent Role="LanguageAdmin">
               <PropertyRef Name="VariantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Action">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="GameId" Type="Int32" Nullable="false" />
+          <Property Name="TimeStamp" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="InitiatorId" Type="Int32" Nullable="false" />
+          <Property Name="ReceiverId" Type="Int32" Nullable="false" />
+          <Property Name="ActionTaken" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Day" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Game" Relationship="werewolfModel.FK_Action_Game" FromRole="Action" ToRole="Game" />
+          <NavigationProperty Name="Player" Relationship="werewolfModel.FK_Action_Initiator" FromRole="Action" ToRole="Player" />
+          <NavigationProperty Name="Player1" Relationship="werewolfModel.FK_Action_Receiver" FromRole="Action" ToRole="Player" />
+        </EntityType>
+        <Association Name="FK_Action_Game">
+          <End Type="werewolfModel.Game" Role="Game" Multiplicity="1" />
+          <End Type="werewolfModel.Action" Role="Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Game">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Action">
+              <PropertyRef Name="GameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Action_Initiator">
+          <End Type="werewolfModel.Player" Role="Player" Multiplicity="1" />
+          <End Type="werewolfModel.Action" Role="Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Action">
+              <PropertyRef Name="InitiatorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Action_Receiver">
+          <End Type="werewolfModel.Player" Role="Player" Multiplicity="1" />
+          <End Type="werewolfModel.Action" Role="Action" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Action">
+              <PropertyRef Name="ReceiverId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -2125,6 +2253,19 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
               <MappingFragment StoreEntitySet="LanguageAdmin">
                 <ScalarProperty Name="VariantId" ColumnName="VariantId" />
                 <ScalarProperty Name="TelegramId" ColumnName="TelegramId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Actions">
+            <EntityTypeMapping TypeName="werewolfModel.Action">
+              <MappingFragment StoreEntitySet="Action">
+                <ScalarProperty Name="Day" ColumnName="Day" />
+                <ScalarProperty Name="ActionTaken" ColumnName="ActionTaken" />
+                <ScalarProperty Name="ReceiverId" ColumnName="ReceiverId" />
+                <ScalarProperty Name="InitiatorId" ColumnName="InitiatorId" />
+                <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+                <ScalarProperty Name="GameId" ColumnName="GameId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
