@@ -45,7 +45,7 @@ namespace Werewolf_Control
             }
 
         }
-#if (BETA || DEBUG)
+#if (false)
         [Command(Trigger = "achv")]
         public static void GetAchievements(Update u, string[] args)
         {
@@ -475,6 +475,70 @@ namespace Werewolf_Control
             }
             Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html, disableWebPagePreview: true);
             
+        }
+
+        [Command(Trigger = "achv")]
+        public static void GetAchievements(Update u, string[] args)
+        {
+            if (u.Message.Chat.Type == ChatType.Private)
+            {
+                var name = u.Message.From.FirstName;
+                var id = u.Message.From.Id;
+                var username = u.Message.From.Username;
+
+                string Content;
+                string Content2;
+                try
+                {
+                    using (var db = new WWContext())
+                    {
+                        Content = "";
+                        Content2 = "";
+                        //find the player
+                        var p = db.Players.FirstOrDefault(x => x.TelegramId == id);
+                        if (p == null)
+                        {
+                            //remove the command
+                            throw new Exception("Player has never played a game.");
+                        }
+
+                        var ach = (Achievements)(p.Achievements ?? 0);
+                        var attained = ach.GetUniqueFlags();
+                        var count = attained.Count();
+                        var total = Enum.GetNames(typeof(Achievements)).Length;
+                        Content = $"<b>Attained Achievements ({count}/{total}):</b>\n";
+                        foreach (Achievements achv in attained)
+                        {
+                            Content += $"{achv.GetName()}\n";
+                        }
+                        int nocount = 0;
+                        
+                        var all = Enum.GetValues(typeof(Achievements));
+                        foreach (Achievements achv in all)
+                        {
+                            if (!attained.Contains(achv) && achv != 0)
+                            {
+                                Content2 += $"{achv.GetName()}\n<code>--{achv.GetDescription()}</code>\n";
+                                nocount++;
+                            }
+                        }
+                        Content2 = $"<b>Unattained Achievements: ({nocount}/{total})\n</b>" + Content2;
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    Content = "Unable to load stats: " + e.Message;
+                    Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html, disableWebPagePreview: true);
+                    return;
+                }
+                Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, parseMode: ParseMode.Html, disableWebPagePreview: true);
+                Bot.Api.SendTextMessage(u.Message.Chat.Id, Content2, parseMode: ParseMode.Html, disableWebPagePreview: true);
+            }
+            else
+            {
+                Bot.Api.SendTextMessage(u.Message.Chat.Id, "Please use this command in private chat.");
+            }
         }
 
         [Command(Trigger = "statistics")]
