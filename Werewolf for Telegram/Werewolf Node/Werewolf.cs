@@ -4212,7 +4212,7 @@ namespace Werewolf_Node
 
                     db.SaveChanges();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     while (ex.InnerException != null)
                         ex = ex.InnerException;
