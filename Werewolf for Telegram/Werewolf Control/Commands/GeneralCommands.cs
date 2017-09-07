@@ -534,7 +534,8 @@ namespace Werewolf_Control
             {
                 Bot.Api.SendTextMessage(u.Message.From.Id, Content, parseMode: ParseMode.Html, disableWebPagePreview: true);
                 Bot.Api.SendTextMessage(u.Message.From.Id, Content2, parseMode: ParseMode.Html, disableWebPagePreview: true);
-                Bot.Api.SendTextMessage(u.Message.Chat.Id, "I have sent you a PM.", replyToMessageId: u.Message.MessageId);
+                if (u.Message.Chat.Type != ChatType.Private)
+                    Bot.Api.SendTextMessage(u.Message.Chat.Id, "I have sent you a PM.", replyToMessageId: u.Message.MessageId);
 
             }
             catch
