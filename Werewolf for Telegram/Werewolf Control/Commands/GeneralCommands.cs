@@ -477,6 +477,23 @@ namespace Werewolf_Control
             
         }
 
+
+        private static string GetLocaleAchvString(string key, XDocument doc)
+        {
+            var strings = doc.Descendants("string").FirstOrDefault(x => x.Attribute("key").Value == key);
+            if (strings == null)
+            {
+                //fallback to English
+
+                strings = Bot.English.Descendants("string").FirstOrDefault(x => x.Attribute("key").Value == key);
+            }
+            var values = strings.Descendants("value");
+            var choice = Bot.R.Next(values.Count());
+            var selected = values.ElementAt(choice);
+            return String.Format(selected.Value.FormatHTML()).Replace("\\n", Environment.NewLine);
+        }
+
+
         [Command(Trigger = "achv")]
         public static void GetAchievements(Update u, string[] args)
         {
@@ -484,6 +501,7 @@ namespace Werewolf_Control
             var id = u.Message.From.Id;
             var username = u.Message.From.Username;
 
+            
             string Content;
             string Content2;
             try
@@ -500,6 +518,28 @@ namespace Werewolf_Control
                         throw new Exception("Player has never played a game.");
                     }
 
+                    var language = p.Language;
+                    var doc = new XDocument();
+                    try
+                    {
+                        var files = Directory.GetFiles(Bot.LanguageDirectory);
+                        var file = files.First(x => Path.GetFileNameWithoutExtension(x) == language);
+                        {
+                            doc = XDocument.Load(file);
+                        }
+                    }
+                    catch
+                    {
+                        if (language != "English")
+                        {
+                            var files = Directory.GetFiles(Bot.LanguageDirectory);
+                            var file = files.First(x => Path.GetFileNameWithoutExtension(x) == "English");
+                            {
+                                doc = XDocument.Load(file);
+                            }
+                        }
+                    }
+
                     var ach = (Achievements)(p.Achievements ?? 0);
                     var attained = ach.GetUniqueFlags();
                     var count = attained.Count();
@@ -507,7 +547,7 @@ namespace Werewolf_Control
                     Content = $"<b>Attained Achievements ({count}/{total}):</b>\n";
                     foreach (Achievements achv in attained)
                     {
-                        Content += $"{achv.GetName()}\n";
+                        Content += $"{GetLocaleAchvString($"{achv + "N"}", doc)}\n";
                     }
                     int nocount = 0;
                         
@@ -516,7 +556,7 @@ namespace Werewolf_Control
                     {
                         if (!attained.Contains(achv) && achv != 0)
                         {
-                            Content2 += $"{achv.GetName()}\n<code>--{achv.GetDescription()}</code>\n";
+                            Content2 += $"{GetLocaleAchvString($"{achv + "N"}", doc)}\n<code>--{GetLocaleAchvString($"{achv + "D"}", doc)}</code>\n";
                             nocount++;
                         }
                     }

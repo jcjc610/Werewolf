@@ -337,12 +337,16 @@ namespace Werewolf_Control
                         {
                             if (p.Achievements == null)
                                 p.Achievements = 0;
+                            var lang = p.Language;
                             var ach = (Achievements)p.Achievements;
                             if (ach.HasFlag(a)) return; //no point making another db call if they already have it
                             ach = ach | a;
                             p.Achievements = (long)ach;
                             db.SaveChanges();
-                            Send($"Achievement Unlocked!\n{a.GetName().ToBold()}\n{a.GetDescription()}", p.TelegramId);
+                            var aName = GetLocaleString($"{a + "N"}", lang);
+                            var aDesc = GetLocaleString($"{a + "D"}", lang);
+                            var unlock = GetLocaleString("AchievementUnlocked", lang);
+                            Send($"{unlock}\n{aName.ToBold()}\n{aDesc}", p.TelegramId);
                             Send($"Achievement {a} unlocked for {p.Name}", u.Message.Chat.Id);
                         }
                     }

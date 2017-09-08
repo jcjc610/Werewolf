@@ -4479,8 +4479,10 @@ namespace Werewolf_Node
                         //notify
                         var newFlags = newAch.GetUniqueFlags().ToList();
                         if (newAch == Achievements.None) continue;
-                        var msg = "New Unlocks!".ToBold() + Environment.NewLine;
-                        msg = newFlags.Aggregate(msg, (current, a) => current + $"{a.GetName().ToBold()}\n{a.GetDescription()}\n\n");
+                        // var msg = "New Unlocks!".ToBold() + Environment.NewLine;
+                        var msg = GetLocaleString("AchievementUnlocked").ToBold() + Environment.NewLine;
+                        // msg = newFlags.Aggregate(msg, (current, a) => current + $"{a.GetName().ToBold()}\n{a.GetDescription()}\n\n");
+                        msg = newFlags.Aggregate(msg, (current, a) => current + $"{GetLocaleString($"{a + "N"}").ToBold()}\n{GetLocaleString($"{a + "D"}")}\n\n");
                         Send(msg, p.TelegramId);
                     }
                 }
@@ -4501,7 +4503,11 @@ namespace Werewolf_Node
                     ach = ach | a;
                     p.Achievements = (long)ach;
                     db.SaveChanges();
-                    Send($"Achievement Unlocked!\n{a.GetName().ToBold()}\n{a.GetDescription()}", player.Id);
+                    var aName = GetLocaleString($"{a + "N"}");
+                    var aDesc = GetLocaleString($"{a + "D"}");
+                    var unlock = GetLocaleString("AchievementUnlocked");
+                    Send($"{unlock}\n{aName.ToBold()}\n{aDesc}", player.Id);
+                    // Send($"Achievement Unlocked!\n{a.GetName().ToBold()}\n{a.GetDescription()}", player.Id);
                 }
             }
         }
