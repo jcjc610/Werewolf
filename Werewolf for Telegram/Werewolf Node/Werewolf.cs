@@ -641,31 +641,38 @@ namespace Werewolf_Node
 
                 if (player == null) return;
 
-                if (player.PlayerRole == IRole.Mayor && args[2] == "reveal" && player.HasUsedAbility == false)
+                if ((player.PlayerRole == IRole.Mayor || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Mayor)) && args[2] == "reveal" && player.HasUsedAbility == false)
                 {
                     player.HasUsedAbility = true;
-                    SendWithQueue(GetLocaleString("MayorReveal", player.GetName()));
+                    if (player.PlayerRole == IRole.Mayor)
+                        SendWithQueue(GetLocaleString("MayorReveal", player.GetName()));
 
                     Program.MessagesSent++;
-                    ReplyToCallback(query,
-                        GetLocaleString("ChoiceAccepted"));
-
+                    if (player.PlayerRole == IRole.Mayor)
+                        ReplyToCallback(query, GetLocaleString("ChoiceAccepted"));
+                    else
+                        ReplyToCallback(query, GetLocaleString("ChoiceAcceptedConfusedFailed"));
                     return;
                 }
-                else if (player.PlayerRole == IRole.Mayor && args[2] == "reveal" && player.HasUsedAbility == true)
+                else if ((player.PlayerRole == IRole.Mayor || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Mayor)) && args[2] == "reveal" && player.HasUsedAbility == true)
                     return;
 
-                if (player.PlayerRole == IRole.Blacksmith && player.CurrentQuestion.QType == QuestionType.SpreadSilver)
+                if ((player.PlayerRole == IRole.Blacksmith || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Blacksmith)) && player.CurrentQuestion.QType == QuestionType.SpreadSilver)
                 {
                     if (args[2] == "yes")
                     {
                         player.HasUsedAbility = true;
-                        _silverSpread = true;
-                        SendWithQueue(GetLocaleString("BlacksmithSpreadSilver", player.GetName()));
+                        if (player.PlayerRole == IRole.Blacksmith)
+                        {
+                            _silverSpread = true;
+                            SendWithQueue(GetLocaleString("BlacksmithSpreadSilver", player.GetName()));
+                        }
                     }
 
-                    ReplyToCallback(query,
-                        GetLocaleString("ChoiceAccepted"));
+                    if (player.PlayerRole == IRole.Blacksmith)
+                        ReplyToCallback(query, GetLocaleString("ChoiceAccepted"));
+                    else
+                        ReplyToCallback(query, GetLocaleString("ChoiceAcceptedConfusedFailed"));
                     player.CurrentQuestion = null;
                     return;
                 }
@@ -751,20 +758,23 @@ namespace Werewolf_Node
                         clearCurrent = false;
                     }
                 }
-                if (player.PlayerRole == IRole.WildChild && player.CurrentQuestion.QType == QuestionType.RoleModel)
+                if ((player.PlayerRole == IRole.WildChild || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.WildChild)) && player.CurrentQuestion.QType == QuestionType.RoleModel)
                 {
                     player.RoleModel = target.Id;
                     player.Choice = -1;
                 }
-                if (player.PlayerRole == IRole.Cupid && player.CurrentQuestion.QType == QuestionType.Lover1)
+                if ((player.PlayerRole == IRole.Cupid || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Cupid)) && player.CurrentQuestion.QType == QuestionType.Lover1)
                 {
                     var lover1 = Players.FirstOrDefault(x => x.Id == player.Choice);
 
                     if (lover1 != null)
                     {
-                        if (lover1.Id == player.Id)
-                            AddAchievement(player, Achievements.SelfLoving);
-                        lover1.InLove = true;
+                        if (player.PlayerRole == IRole.Cupid)
+                        {
+                            if (lover1.Id == player.Id)
+                                AddAchievement(player, Achievements.SelfLoving);
+                            lover1.InLove = true;
+                        }
                         //send menu for second choice....
                         var secondChoices = Players.Where(x => !x.IsDead && x.Id != lover1.Id).ToList();
                         var buttons =
@@ -779,39 +789,46 @@ namespace Werewolf_Node
                     }
                     return;
                 }
-                if (player.PlayerRole == IRole.Cupid && player.CurrentQuestion.QType == QuestionType.Lover2)
+                if ((player.PlayerRole == IRole.Cupid || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Cupid)) && player.CurrentQuestion.QType == QuestionType.Lover2)
                 {
-                    var lover11 = Players.FirstOrDefault(x => x.InLove);
-                    if (lover11 == null)
-                        return;
-                    if (lover11.Id == player.Id)
-                        AddAchievement(player, Achievements.SelfLoving);
-                    lover11.LoverId = player.Choice;
-                    lover11.InLove = true;
+                    if (player.PlayerRole == IRole.Cupid)
+                    {
+                        var lover11 = Players.FirstOrDefault(x => x.InLove);
+                        if (lover11 == null)
+                            return;
+                        if (lover11.Id == player.Id)
+                            AddAchievement(player, Achievements.SelfLoving);
+                        lover11.LoverId = player.Choice;
+                        lover11.InLove = true;
 
-                    var id = int.Parse(lover11.Id.ToString());
-                    var lover2 = Players.FirstOrDefault(x => x.Id == player.Choice);
-                    if (lover2 == null)
-                        return;
-                    lover2.InLove = true;
-                    lover2.LoverId = id;
-                    player.Choice = -1;
+                        var id = int.Parse(lover11.Id.ToString());
+
+                        var lover2 = Players.FirstOrDefault(x => x.Id == player.Choice);
+                        if (lover2 == null)
+                            return;
+                        lover2.InLove = true;
+                        lover2.LoverId = id;
+                        player.Choice = -1;
+                    }
                 }
 
-                if (player.PlayerRole == IRole.Doppelgänger && player.CurrentQuestion.QType == QuestionType.RoleModel)
+                if ((player.PlayerRole == IRole.Doppelgänger || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Doppelgänger)) && player.CurrentQuestion.QType == QuestionType.RoleModel)
                 {
                     player.RoleModel = target.Id;
                     player.Choice = -1;
                 }
 
-                if (player.PlayerRole == IRole.Cultist && player.CurrentQuestion.QType == QuestionType.Convert)
+                if ((player.PlayerRole == IRole.Cultist || (player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Cultist)) && player.CurrentQuestion.QType == QuestionType.Convert)
                 {
-                    var others =
-                        Players.Where(
-                            x => !x.IsDead && x.PlayerRole == IRole.Cultist && x.Id != player.Id);
-                    foreach (var w in others)
+                    if (player.PlayerRole == IRole.Cultist)
                     {
-                        Send(GetLocaleString("CultistVotedConvert", player.GetName(), target.GetName()), w.Id);
+                        var others =
+                            Players.Where(
+                                x => !x.IsDead && x.PlayerRole == IRole.Cultist && x.Id != player.Id);
+                        foreach (var w in others)
+                        {
+                            Send(GetLocaleString("CultistVotedConvert", player.GetName(), target.GetName()), w.Id);
+                        }
                     }
                 }
 
@@ -1274,7 +1291,7 @@ namespace Werewolf_Node
                 //force roles for testing
                 rolesToAssign[0] = IRole.Wolf;
                 rolesToAssign[1] = IRole.Villager;
-                rolesToAssign[2] = IRole.Mayor;
+                rolesToAssign[2] = IRole.Confused;
                 //rolesToAssign[3] = IRole.WolfCub;
                 //if (rolesToAssign.Count >= 5)
                 //    rolesToAssign[4] = IRole.Villager;
@@ -1381,6 +1398,76 @@ namespace Werewolf_Node
                         p.HasDayAction = false;
                         p.Team = ITeam.SerialKiller;
                         break;
+                    case IRole.Confused:
+                        Array rolesList = Enum.GetValues(typeof(IRole));
+                        p.HiddenConfusedRole = (IRole)rolesList.GetValue(Program.R.Next(rolesList.Length));
+                        switch (p.HiddenConfusedRole)
+                        {
+                            case IRole.Villager:
+                            case IRole.Cursed:
+                            case IRole.Drunk:
+                            case IRole.Beholder:
+                            case IRole.ApprenticeSeer:
+                            case IRole.Traitor:
+                            case IRole.Mason:
+                            case IRole.Hunter:
+                            case IRole.Mayor:
+                            case IRole.ClumsyGuy:
+                            case IRole.Prince:
+                                p.HasDayAction = false;
+                                p.HasNightAction = false;
+                                p.Team = ITeam.Village;
+                                break;
+                            case IRole.Fool:
+                            case IRole.Harlot:
+                            case IRole.CultistHunter:
+                            case IRole.Seer:
+                            case IRole.GuardianAngel:
+                            case IRole.WildChild:
+                            case IRole.Cupid:
+                            case IRole.Blacksmith:
+                                p.Team = ITeam.Village;
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                break;
+                            case IRole.Doppelgänger:
+                                p.Team = ITeam.Village;
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                break;
+                            case IRole.Detective:
+                            case IRole.Gunner:
+                                p.Team = ITeam.Village;
+                                p.HasDayAction = true;
+                                p.HasNightAction = false;
+                                break;
+                            case IRole.Sorcerer:
+                            case IRole.AlphaWolf:
+                            case IRole.WolfCub:
+                            case IRole.Wolf:
+                                p.Team = ITeam.Village;
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                break;
+                            case IRole.Tanner:
+                                p.Team = ITeam.Village;
+                                p.HasDayAction = false;
+                                p.HasNightAction = false;
+                                break;
+                            case IRole.Cultist:
+                                p.HasDayAction = false;
+                                p.HasNightAction = true;
+                                p.Team = ITeam.Village;
+                                break;
+                            case IRole.SerialKiller:
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                p.Team = ITeam.Village;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -1394,7 +1481,11 @@ namespace Werewolf_Node
             foreach (var p in Players.ToList())
             {
                 if (p?.PlayerRole == null) continue;
-                var msg = GetRoleInfo(p.PlayerRole);
+                var msg = "";
+                if (p.PlayerRole != IRole.Confused)
+                    msg = GetRoleInfo(p.PlayerRole);
+                else
+                    msg = GetRoleInfo(p.PlayerRole, p);
                 try
                 {
                     // ReSharper disable once UnusedVariable
@@ -1414,34 +1505,53 @@ namespace Werewolf_Node
             }
         }
 
-        private string GetRoleInfo(IRole role)
+        private string GetRoleInfo(IRole role, IPlayer confused = null)
         {
             try
             {
                 string msg;
-                switch (role)
+                if (confused == null)
+                    switch (role)
+                    {
+                        case IRole.Fool:
+                            return GetLocaleString("RoleInfoSeer");
+                        case IRole.Beholder:
+                            msg = GetLocaleString("RoleInfoBeholder");
+                            var seer = Players?.FirstOrDefault(x => x.PlayerRole == IRole.Seer);
+                            if (seer != null)
+                                msg += GetLocaleString("BeholderSeer", $"{seer.GetName()}");
+                            else
+                                msg += "  " + GetLocaleString("NoSeer");
+                            return msg;
+                        case IRole.Mason:
+                            msg = GetLocaleString("RoleInfoMason");
+                            if (Players?.Count(x => x?.PlayerRole == IRole.Mason) > 1)
+                            {
+                                msg += GetLocaleString("MasonTeam", Players.Where(x => x.PlayerRole == IRole.Mason).Select(x => x.GetName()).Aggregate((current, next) => current + ", " + next));
+                            }
+                            return msg;
+                        case IRole.Doppelgänger:
+                            return GetLocaleString("RoleInfoDoppelganger");
+                        default:
+                            return GetLocaleString($"RoleInfo{role}");
+                    }
+                else
                 {
-                    case IRole.Fool:
-                        return GetLocaleString("RoleInfoSeer");
-                    case IRole.Beholder:
-                        msg = GetLocaleString("RoleInfoBeholder");
-                        var seer = Players?.FirstOrDefault(x => x.PlayerRole == IRole.Seer);
-                        if (seer != null)
-                            msg += GetLocaleString("BeholderSeer", $"{seer.GetName()}");
-                        else
+                    switch (confused.HiddenConfusedRole)
+                    {
+                        case IRole.Fool:
+                            return GetLocaleString("RoleInfoSeer");
+                        case IRole.Beholder:
+                            msg = GetLocaleString("RoleInfoBeholder");
                             msg += "  " + GetLocaleString("NoSeer");
-                        return msg;
-                    case IRole.Mason:
-                        msg = GetLocaleString("RoleInfoMason");
-                        if (Players?.Count(x => x?.PlayerRole == IRole.Mason) > 1)
-                        {
-                            msg += GetLocaleString("MasonTeam", Players.Where(x => x.PlayerRole == IRole.Mason).Select(x => x.GetName()).Aggregate((current, next) => current + ", " + next));
-                        }
-                        return msg;
-                    case IRole.Doppelgänger:
-                        return GetLocaleString("RoleInfoDoppelganger");
-                    default:
-                        return GetLocaleString($"RoleInfo{role}");
+                            return msg;
+                        case IRole.Mason:
+                            return GetLocaleString("RoleInfoMason");
+                        case IRole.Doppelgänger:
+                            return GetLocaleString("RoleInfoDoppelganger");
+                        default:
+                            return GetLocaleString($"RoleInfo{confused.HiddenConfusedRole}");
+                    }
                 }
             }
             catch (Exception e)
@@ -1477,6 +1587,19 @@ namespace Werewolf_Node
                         Send(GetLocaleString("BeholderNewSeer", $"{aps.GetName()}", ds?.GetName() ?? GetDescription(IRole.Seer)), beholder.Id);
                 }
             }
+            var confusedAppSeer = Players?.FirstOrDefault(x => x.PlayerRole == IRole.Confused & x.HiddenConfusedRole == IRole.ApprenticeSeer& !x.IsDead);
+            if (confusedAppSeer != null && (!checkbitten || !aps.Bitten))
+            {
+                //get the dead seer
+                var ds = Players.FirstOrDefault(x => x.PlayerRole == IRole.Seer && x.IsDead);
+
+                //seer is dead, promote app seer
+                confusedAppSeer.HasDayAction = false;
+                confusedAppSeer.HasNightAction = true;
+                aps.HiddenConfusedRole = IRole.Seer;
+                //notify
+                Send(GetLocaleString("ApprenticeNowSeer", ds?.GetName() ?? GetDescription(IRole.Seer)), confusedAppSeer.Id);
+            }
             CheckWildChild(checkbitten);
             CheckDoppelganger(checkbitten);
 
@@ -1501,6 +1624,8 @@ namespace Werewolf_Node
         {
             if (GameDay != 1) return;
             //Wild Child
+            var confused = Players.GetPlayerForRole(IRole.Confused);
+
             var wc = Players.GetPlayerForRole(IRole.WildChild);
             if (wc != null && wc.RoleModel == 0)
             {
@@ -1522,6 +1647,17 @@ namespace Werewolf_Node
                 {
                     dg.RoleModel = choice.Id;
                     Send(GetLocaleString("RoleModelChosen", choice.GetName()), dg.Id);
+                }
+            }
+
+            if (confused != null && (confused.HiddenConfusedRole == IRole.WildChild || confused.HiddenConfusedRole == IRole.Doppelgänger))
+            {
+                var choiceid = ChooseRandomPlayerId(confused);
+                var choice = Players.FirstOrDefault(x => x.Id == choiceid);
+                if (choice != null)
+                {
+                    confused.RoleModel = choice.Id;
+                    Send(GetLocaleString("RoleModelChosen", choice.GetName()), confused.Id);
                 }
             }
 
@@ -1671,6 +1807,23 @@ namespace Werewolf_Node
                         wc.HasNightAction = true;
                         wc.HasDayAction = false;
                         Send(GetLocaleString("WildChildTransform", rm.GetName(), teammates), wc.Id);
+                    }
+                }
+            }
+
+            var confusedWildChild = Players?.FirstOrDefault(x => x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.WildChild & !x.IsDead);
+
+            if (confusedWildChild != null && (!checkbitten || !confusedWildChild.Bitten))
+            {
+                var rm = Players.FirstOrDefault(x => x.Id == confusedWildChild.RoleModel);
+                if (rm != null)
+                {
+                    if (rm.IsDead)
+                    {
+                        confusedWildChild.HiddenConfusedRole = IRole.Wolf;
+                        confusedWildChild.HasNightAction = true;
+                        wc.HasDayAction = false;
+                        Send(GetLocaleString("WildChildTransform", rm.GetName(), ""), confusedWildChild.Id);
                     }
                 }
             }
@@ -1868,6 +2021,170 @@ namespace Werewolf_Node
                             p.HasDayAction = false;
                             var choices = new[] { new[] { new InlineKeyboardButton(GetLocaleString("Reveal"), $"vote|{Program.ClientId}|reveal") } }.ToList();
                             SendMenu(choices, p, GetLocaleString("AskMayor"), QuestionType.Mayor);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+
+                }
+            }
+
+            var confusedDG = Players?.FirstOrDefault(x => x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.Doppelgänger & !x.IsDead);
+
+            // Check DG
+            if (confusedDG != null && (!checkbitten || !confusedDG.Bitten))
+            {
+                var rm = Players.FirstOrDefault(x => x.Id == confusedDG.RoleModel);
+                if (rm != null && rm.IsDead)
+                {
+                    var teammates = "";
+                    //notify other wolves
+                    confusedDG.HiddenConfusedRole = rm.OriginalRole;
+                    if (rm.OriginalRole == IRole.ApprenticeSeer || rm.OriginalRole == IRole.WildChild || rm.OriginalRole == IRole.Traitor || rm.OriginalRole == IRole.Cursed)
+                    {
+                        //if (rm.OriginalRole == IRole.ApprenticeSeer || rm.OriginalRole == IRole.Cursed)
+                        if (rm.OriginalRole == IRole.ApprenticeSeer)     //if cursed turned wolf before dying, should DG turn cursed or directly wolf? use the above line if DG should turn cursed
+                            if (rm.PlayerRole != IRole.Wolf)
+                                confusedDG.HiddenConfusedRole = rm.PlayerRole;
+                        if (rm.PlayerRole != IRole.Cultist)
+                            confusedDG.HiddenConfusedRole = rm.PlayerRole;
+                    }
+
+                    if (!new[] { IRole.Mason, IRole.Wolf, IRole.AlphaWolf, IRole.WolfCub, IRole.Cultist, IRole.WildChild }.Contains(confusedDG.HiddenConfusedRole))
+                    {
+                        //tell them their new role
+                        Send(GetRoleInfo(confusedDG.HiddenConfusedRole), confusedDG.Id);
+                    }
+                    switch (confusedDG.HiddenConfusedRole)
+                    {
+                        case IRole.Villager:
+                        case IRole.Cursed:
+                        case IRole.Drunk:
+                        case IRole.Prince:
+                        case IRole.ClumsyGuy:
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasUsedAbility = false;
+                            break;
+                        case IRole.Beholder:
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.Team = ITeam.Village;
+                            Send(GetLocaleString("NoSeer"), confusedDG.Id);
+                            break;
+                        case IRole.ApprenticeSeer:
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.Team = ITeam.Village;
+                            break;
+                        case IRole.Traitor:
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.Team = ITeam.Village;
+                            if (Players.Count(x => !x.IsDead && WolfRoles.Contains(x.HiddenConfusedRole)) == 0)
+                            {
+                                confusedDG.HasNightAction = true;
+                                confusedDG.HiddenConfusedRole = IRole.Wolf;
+                            }
+                            break;
+                        case IRole.Mason:
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.Team = ITeam.Village;
+                            Send(GetLocaleString("DGTransformToMason", rm.GetName(), ""), confusedDG.Id);
+                            break;
+                        case IRole.Hunter:
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.Team = ITeam.Village;
+                            break;
+                        case IRole.Fool:
+                        case IRole.Harlot:
+                        case IRole.CultistHunter:
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = true;
+                            confusedDG.HasDayAction = false;
+                            break;
+                        case IRole.Seer:
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = true;
+                            confusedDG.HasDayAction = false;
+                            break;
+                        case IRole.GuardianAngel:
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = true;
+                            confusedDG.HasDayAction = false;
+                            break;
+                        case IRole.WildChild:
+                            confusedDG.RoleModel = rm.RoleModel;
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = true;
+                            confusedDG.HasDayAction = false;
+                            Send(GetLocaleString("NewWCRoleModel", Players.FirstOrDefault(x => x.Id == confusedDG.RoleModel)?.GetName() ?? "None was chosen!"), confusedDG.Id);
+                            break;
+                        case IRole.Cupid:
+                        case IRole.Doppelgänger:
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.HasDayAction = false;
+                            break;
+                        case IRole.Detective:
+                        case IRole.Blacksmith:
+                        case IRole.Gunner:
+                            confusedDG.Bullet = 2;
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasDayAction = true;
+                            confusedDG.HasNightAction = false;
+                            break;
+                        case IRole.AlphaWolf:
+                        case IRole.WolfCub:
+                        case IRole.Wolf:
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = true;
+                            confusedDG.HasDayAction = false;
+                            switch (p.HiddenConfusedRole)
+                            {
+                                case IRole.AlphaWolf:
+                                    Send(GetLocaleString("DGTransformToAlpha", rm.GetName(), ""), confusedDG.Id);
+                                    break;
+                                case IRole.WolfCub:
+                                    Send(GetLocaleString("DGTransformToWolfCub", rm.GetName(), ""), confusedDG.Id);
+                                    break;
+                                case IRole.Wolf:
+                                    Send(GetLocaleString("DGTransformToWolf", rm.GetName(), ""), confusedDG.Id);
+                                    break;
+                            }
+                            break;
+                        case IRole.Tanner:
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = false;
+                            break;
+                        case IRole.Cultist:
+                            confusedDG.HasDayAction = false;
+                            confusedDG.HasNightAction = true;
+                            confusedDG.Team = ITeam.Village;
+                            Send(GetLocaleString("DGTransformToCult", rm.GetName(), ""), confusedDG.Id);
+                            break;
+                        case IRole.SerialKiller:
+                            confusedDG.HasNightAction = true;
+                            confusedDG.HasDayAction = false;
+                            confusedDG.Team = ITeam.Village;
+                            break;
+                        case IRole.Sorcerer:
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = true;
+                            confusedDG.HasDayAction = false;
+                            break;
+                        case IRole.Mayor:
+                            confusedDG.HasUsedAbility = false;
+                            confusedDG.Team = ITeam.Village;
+                            confusedDG.HasNightAction = false;
+                            confusedDG.HasDayAction = false;
+                            var choices = new[] { new[] { new InlineKeyboardButton(GetLocaleString("Reveal"), $"vote|{Program.ClientId}|reveal") } }.ToList();
+                            SendMenu(choices, confusedDG, GetLocaleString("AskMayor"), QuestionType.Mayor);
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -2263,6 +2580,19 @@ namespace Werewolf_Node
                 }
             }
 
+            var confusedDet = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.Detective & !x.IsDead && x.Choice != 0 && x.Choice != -1);
+            if (confusedDet != null)
+            {
+                var check = Players.FirstOrDefault(x => x.Id == confusedDet.Choice);
+                if (check != null)
+                {
+                    var possibleRoles = Players.Where(x => !x.IsDead && x.Id != confusedDet.Id && x.PlayerRole != IRole.Detective).Select(x => x.PlayerRole).ToList();
+                    possibleRoles.Shuffle();
+                    possibleRoles.Shuffle();
+                    Send(GetLocaleString("DetectiveSnoop", check.GetName(), GetDescription(possibleRoles[0]), confusedDet.Id));
+                }
+            }
+
             var gunner = Players.FirstOrDefault(x => x.PlayerRole == IRole.Gunner & !x.IsDead && x.Choice != 0 && x.Choice != -1);
             if (gunner != null)
             {
@@ -2298,6 +2628,13 @@ namespace Werewolf_Node
                     if (check.InLove)
                         KillLover(check);
                 }
+            }
+            var confusedGunner = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.Gunner & !x.IsDead && x.Choice != 0 && x.Choice != -1);
+            if (confusedGunner != null)
+            {
+                var check = Players.FirstOrDefault(x => x.Id == confusedDet.Choice);
+                confusedGunner.Bullet--;
+                confusedGunner.HasUsedAbility = true;
             }
             CheckRoleChanges();
         }
@@ -3154,6 +3491,140 @@ namespace Werewolf_Node
 
             #endregion
 
+            #region Confused Night
+            var confused = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused && !x.IsDead);
+            if (confused != null)
+            {
+                switch (confused.HiddenConfusedRole)
+                {
+                    case IRole.AlphaWolf:
+                    case IRole.Wolf:
+                    case IRole.WolfCub:
+                        var choice = confused.Choice;
+                        var target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
+                        if (target != null)
+                        {
+                            Send(GetLocaleString("GuardBlockedWolf", target.GetName()), confused.Id);
+                        }
+                        else
+                        {
+                            //no choice
+                        }
+                        break;
+                    case IRole.SerialKiller:
+                        choice = confused.Choice;
+                        target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
+                        if (target != null)
+                        {
+                            Send(GetLocaleString("GuardBlockedKiller", target.GetName()), confused.Id);
+                        }
+                        else
+                        {
+                            //no choice
+                        }
+                        break;
+                    case IRole.CultistHunter:
+                        choice = confused.Choice;
+                        target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
+                        if (target != null)
+                        {
+                            Send(GetLocaleString("HunterFailedToFind", target.GetName()), confused.Id);
+                        }
+                        else
+                        {
+                            //no choice
+                        }
+                        break;
+                    case IRole.Cultist:
+                        choice = confused.Choice;
+                        target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
+                        if (target != null)
+                        {
+                            Send(GetLocaleString("CultUnableToConvert", confused.GetName(), target.GetName()), confused.Id);
+                        }
+                        else
+                        {
+                            //no choice
+                        }
+                        break;
+                    case IRole.Harlot:
+                        choice = confused.Choice;
+                        target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
+                        if (target != null)
+                        {
+                            Send(GetLocaleString("HarlotVisitNonWolf", confused.GetName(), target.GetName()), confused.Id);
+                        }
+                        else
+                        {
+                            //no choice
+                        }
+                        break;
+                    case IRole.Seer:
+                    case IRole.Fool:
+                        choice = confused.Choice;
+                        target = Players.FirstOrDefault(x => x.Id == confused.Choice);
+                        if (target != null)
+                        {
+                            var possibleRoles = Players.Where(x => !x.IsDead && x.Id != confused.Id && x.PlayerRole != IRole.Seer && x.PlayerRole != IRole.Fool).Select(x => x.PlayerRole).ToList();
+                            possibleRoles.Shuffle();
+                            possibleRoles.Shuffle();
+                            if (possibleRoles.Any())
+                            {
+                                //don't see wolf type!
+                                if (WolfRoles.Contains(possibleRoles[0]))
+                                    possibleRoles[0] = IRole.Wolf;
+                                Send(GetLocaleString("SeerSees", target.GetName(), GetDescription(possibleRoles[0])), confused.Id);
+                            }
+                        }
+                        break;
+                    case IRole.Sorcerer:
+                        choice = confused.Choice;
+                        target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
+                        if (target != null)
+                        {
+                            Send(GetLocaleString("SorcererOther", target.GetName()), confused.Id);
+                        }
+                        else
+                        {
+                            //no choice
+                        }
+                        break;
+                    case IRole.GuardianAngel:
+                        choice = confused.Choice;
+                        target = Players.FirstOrDefault(x => x.Id == choice & !x.IsDead);
+                        if (target != null)
+                        {
+                            Send(GetLocaleString("GuardNoAttack", target.GetName()), confused.Id);
+                        }
+                        else
+                        {
+                            //no choice
+                        }
+                        break;
+                    case IRole.Villager:
+                    case IRole.ApprenticeSeer:
+                    case IRole.Beholder:
+                    case IRole.Blacksmith:
+                    case IRole.ClumsyGuy:
+                    case IRole.Cursed:
+                    case IRole.Detective:
+                    case IRole.Drunk:
+                    case IRole.Gunner:
+                    case IRole.Hunter:
+                    case IRole.Mason:
+                    case IRole.Mayor:
+                    case IRole.Prince:
+                    case IRole.Tanner:
+                    case IRole.Traitor:
+                    case IRole.WildChild:
+                    case IRole.Doppelgänger:
+                    case IRole.Cupid:
+                        break;
+                    default:
+                        break;
+                }
+            }
+            #endregion
             #region GA Night
 
             if (ga != null)
@@ -3264,6 +3735,9 @@ namespace Werewolf_Node
                                 case IRole.GuardianAngel:
                                     msg = GetLocaleString("GuardianEaten", p.GetName());
                                     break;
+                                case IRole.Confused:
+                                    msg = GetLocaleString("ConfusedEaten", p.GetName(), $"{GetLocaleString(p.HiddenConfusedRole.ToString())}", $"{GetLocaleString(p.PlayerRole.ToString())}");
+                                    break;
                                 default:
                                     msg = GetLocaleString("DefaultEaten", p.GetName(), $"{p.GetName()} {GetLocaleString("Was")} {GetDescription(p.PlayerRole)}");
                                     break;
@@ -3291,6 +3765,9 @@ namespace Werewolf_Node
                                     SendWithQueue(GetLocaleString("DefaultKilled", p.GetName(),
                                         $"{GetDescription(p.PlayerRole)} {GetLocaleString("IsDead")}"));
                                     HunterFinalShot(p, KillMthd.SerialKilled);
+                                    break;
+                                case IRole.Confused:
+                                    msg = GetLocaleString("ConfusedKilled", p.GetName(), $"{GetLocaleString(p.HiddenConfusedRole.ToString())}", $"{GetLocaleString(p.PlayerRole.ToString())}");
                                     break;
                                 default:
                                     msg = GetLocaleString("DefaultKilled", p.GetName(), $"{GetDescription(p.PlayerRole)} {GetLocaleString("IsDead")}");
@@ -3853,6 +4330,18 @@ namespace Werewolf_Node
                     SendMenu(choices, detective, GetLocaleString("AskDetect"), QuestionType.Detect);
                 }
             }
+            var confusedDet = Players.FirstOrDefault(x => x != null && x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.Detective & !x.IsDead);
+            if (confusedDet != null)
+            {
+                confusedDet.Choice = 0;
+                var options = Players.Where(x => !x.IsDead && x.Id != confusedDet.Id).ToList();
+                if (options.Any())
+                {
+                    var choices = options.Select(x => new[] { new InlineKeyboardButton(x.Name, $"vote|{Program.ClientId}|{x.Id}") }).ToList();
+                    choices.Add(new[] { new InlineKeyboardButton("Skip", $"vote|{Program.ClientId}|-1") });
+                    SendMenu(choices, confusedDet, GetLocaleString("AskDetect"), QuestionType.Detect);
+                }
+            }
 
             var mayor = Players.FirstOrDefault(x => x.PlayerRole == IRole.Mayor & !x.IsDead);
             if (mayor != null && GameDay == 1)
@@ -3865,6 +4354,19 @@ namespace Werewolf_Node
                     }
                 }.ToList();
                 SendMenu(choices, mayor, GetLocaleString("AskMayor"), QuestionType.Mayor);
+            }
+
+            var confusedMayor = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.Mayor & !x.IsDead);
+            if (confusedMayor != null && GameDay == 1)
+            {
+                var choices = new[]
+                {
+                    new[]
+                    {
+                        new InlineKeyboardButton(GetLocaleString("Reveal"), $"vote|{Program.ClientId}|reveal")
+                    }
+                }.ToList();
+                SendMenu(choices, confusedMayor, GetLocaleString("AskMayor"), QuestionType.Mayor);
             }
 
             var blacksmith = Players.FirstOrDefault(x => x.PlayerRole == IRole.Blacksmith & !x.IsDead & !x.HasUsedAbility);
@@ -3881,6 +4383,20 @@ namespace Werewolf_Node
                 SendMenu(choices, blacksmith, GetLocaleString("SpreadDust"), QuestionType.SpreadSilver);
             }
 
+            var confusedBlacksmith = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.Blacksmith & !x.IsDead & !x.HasUsedAbility);
+
+            if (confusedBlacksmith != null)
+            {
+                var choices = new[]
+                {
+                    new[]
+                    {
+                        new InlineKeyboardButton(GetLocaleString("Yes"), $"vote|{Program.ClientId}|yes"), new InlineKeyboardButton(GetLocaleString("No"), $"vote|{Program.ClientId}|no")
+                    }
+                }.ToList();
+                SendMenu(choices, confusedBlacksmith, GetLocaleString("SpreadDust"), QuestionType.SpreadSilver);
+            }
+
             var gunner = Players.FirstOrDefault(x => x.PlayerRole == IRole.Gunner & !x.IsDead);
 
             if (gunner != null)
@@ -3894,6 +4410,23 @@ namespace Werewolf_Node
                         var choices = options.Select(x => new[] { new InlineKeyboardButton(x.Name, $"vote|{Program.ClientId}|{x.Id}") }).ToList();
                         choices.Add(new[] { new InlineKeyboardButton("Skip", $"vote|{Program.ClientId}|-1") });
                         SendMenu(choices, gunner, GetLocaleString("AskShoot", gunner.Bullet), QuestionType.Shoot);
+                    }
+                }
+            }
+
+            var confusedGunner = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused && x.HiddenConfusedRole == IRole.Gunner & !x.IsDead);
+
+            if (confusedGunner != null)
+            {
+                confusedGunner.Choice = 0;
+                if (confusedGunner.Bullet > 0)
+                {
+                    var options = Players.Where(x => !x.IsDead && x.Id != confusedGunner.Id).ToList();
+                    if (options.Any())
+                    {
+                        var choices = options.Select(x => new[] { new InlineKeyboardButton(x.Name, $"vote|{Program.ClientId}|{x.Id}") }).ToList();
+                        choices.Add(new[] { new InlineKeyboardButton("Skip", $"vote|{Program.ClientId}|-1") });
+                        SendMenu(choices, confusedGunner, GetLocaleString("AskShoot", gunner.Bullet), QuestionType.Shoot);
                     }
                 }
             }
@@ -4006,11 +4539,92 @@ namespace Werewolf_Node
                         }
                         else player.Choice = -1;
                         break;
+                    case IRole.Confused:
+                        switch (player.HiddenConfusedRole)
+                        {
+                            case IRole.SerialKiller:
+                                targets = targetBase.ToList();
+                                msg = GetLocaleString("AskKill");
+                                qtype = QuestionType.SerialKill;
+                                break;
+                            case IRole.Harlot:
+                                targets = targetBase.ToList();
+                                msg = GetLocaleString("AskVisit");
+                                qtype = QuestionType.Visit;
+                                break;
+                            case IRole.Fool:
+                            case IRole.Seer:
+                            case IRole.Sorcerer:
+                                targets = targetBase.ToList();
+                                msg = GetLocaleString("AskSee");
+                                qtype = QuestionType.See;
+                                break;
+                            case IRole.GuardianAngel:
+                                targets = targetBase.ToList();
+                                msg = GetLocaleString("AskGuard");
+                                qtype = QuestionType.Guard;
+                                break;
+                            case IRole.Wolf:
+                            case IRole.AlphaWolf:
+                            case IRole.WolfCub:
+                                if (!_silverSpread)
+                                {
+                                    targets = targetBase.ToList();
+                                    msg = GetLocaleString("AskEat");
+                                    qtype = QuestionType.Kill;
+                                }
+                                else
+                                    msg = null;
+                                break;
+                            case IRole.Cultist:
+                                {
+                                    targets = targetBase.ToList();
+                                    msg = GetLocaleString("AskConvert");
+                                    qtype = QuestionType.Convert;
+                                }
+                                break;
+                            case IRole.CultistHunter:
+                                targets = targetBase.ToList();
+                                msg = GetLocaleString("AskHunt");
+                                qtype = QuestionType.Hunt;
+                                break;
+                            case IRole.WildChild:
+                                if (GameDay == 1)
+                                {
+                                    targets = targetBase.ToList();
+                                    msg = GetLocaleString("AskRoleModel");
+                                    qtype = QuestionType.RoleModel;
+                                }
+                                else player.Choice = -1;
+                                break;
+                            case IRole.Doppelgänger:
+                                if (GameDay == 1)
+                                {
+                                    targets = targetBase.ToList();
+                                    msg = GetLocaleString("AskDoppelganger");
+                                    qtype = QuestionType.RoleModel;
+                                }
+                                else player.Choice = -1;
+                                break;
+                            case IRole.Cupid:
+                                //this is a bit more difficult....
+                                if (GameDay == 1)
+                                {
+                                    targets = Players.Where(x => !x.IsDead).ToList();
+                                    msg = GetLocaleString("AskCupid1");
+                                    qtype = QuestionType.Lover1;
+                                }
+                                else player.Choice = -1;
+                                break;
+                            default:
+                                continue;
+                        }
+                        break;
                     default:
                         continue;
                 }
                 var buttons = targets.Select(x => new[] { new InlineKeyboardButton(x.Name, $"vote|{Program.ClientId}|{x.Id}") }).ToList();
-                if (player.PlayerRole != IRole.WildChild && player.PlayerRole != IRole.Cupid && player.PlayerRole != IRole.Doppelgänger)
+                if (player.PlayerRole != IRole.WildChild && player.PlayerRole != IRole.Cupid && player.PlayerRole != IRole.Doppelgänger && !(player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.WildChild) && !(player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Doppelgänger) && !(player.PlayerRole == IRole.Confused && player.HiddenConfusedRole == IRole.Cupid))
                     buttons.Add(new[] { new InlineKeyboardButton("Skip", $"vote|{Program.ClientId}|-1") });
 
                 if (!player.Drunk && !String.IsNullOrWhiteSpace(msg))

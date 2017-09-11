@@ -107,6 +107,8 @@ namespace Werewolf_Node.Helpers
                     return allRoles.Count / 2;
                 case IRole.Fool:
                     return 3;
+                case IRole.Confused:
+                    return 3;
                 case IRole.WildChild:
                     return 1;
                 case IRole.Beholder:

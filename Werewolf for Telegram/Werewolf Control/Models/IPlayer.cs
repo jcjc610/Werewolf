@@ -60,6 +60,7 @@ namespace Werewolf_Control.Models
         public bool DiedFromLove { get; set; } = false;
         public string Name { get; set; }
         public IRole OriginalRole { get; set; }
+        public IRole HiddenConfusedRole { get; set; }
         public bool InLove { get; set; } = false;
         public int LoverId { get; set; } = 0;
         public int DBPlayerId { get; set; } = 0;
@@ -74,7 +75,7 @@ namespace Werewolf_Control.Models
     {
         Villager, Drunk, Harlot, Seer, Traitor, GuardianAngel, Detective, Wolf, Cursed, Gunner, Tanner, Fool, WildChild, Beholder, ApprenticeSeer, Cultist, CultistHunter, Mason, Doppelgänger, Cupid, Hunter, SerialKiller,
         //new roles
-        Sorcerer, AlphaWolf, WolfCub, Blacksmith, Preacher, Faithful, ClumsyGuy, Mayor, Prince
+        Sorcerer, AlphaWolf, WolfCub, Blacksmith, Preacher, Faithful, ClumsyGuy, Mayor, Prince, Confused
     }
 
     public enum ITeam

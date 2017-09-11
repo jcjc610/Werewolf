@@ -71,6 +71,7 @@ namespace Werewolf_Node.Models
         public int DayCult { get; set; } = 0;
         public int RoleModel { get; set; } = 0;
         public IRole KilledByRole { get; set; }
+        public IRole HiddenConfusedRole { get; set; }
         public bool DiedByVisitingKiller { get; set; } = false;
         public bool DiedByVisitingVictim { get; set; } = false;
         public bool WasSavedLastNight { get; set; } = false;
@@ -128,7 +129,7 @@ namespace Werewolf_Node.Models
     {
         Villager, Drunk, Harlot, Seer, Traitor, GuardianAngel, Detective, Wolf, Cursed, Gunner, Tanner, Fool, WildChild, Beholder, ApprenticeSeer, Cultist, CultistHunter, Mason, Doppelgänger, Cupid, Hunter, SerialKiller,
         //new roles
-        Sorcerer, AlphaWolf, WolfCub, Blacksmith, ClumsyGuy, Mayor, Prince
+        Sorcerer, AlphaWolf, WolfCub, Blacksmith, ClumsyGuy, Mayor, Prince, Confused
     }
 
     public enum ITeam
