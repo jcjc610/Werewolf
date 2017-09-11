@@ -2682,9 +2682,9 @@ namespace Werewolf_Node
             CheckRoleChanges();     //so maybe if seer got converted to wolf, appseer will promote here
             if (CheckForGameEnd()) return;
             var nightTime = (DbGroup.NightTime ?? Settings.TimeNight);
-            if (GameDay == 1)
-                if (Players.Any(x => new[] { IRole.Cupid, IRole.Doppelgänger, IRole.WildChild }.Contains(x.PlayerRole)))
-                    nightTime = Math.Max(nightTime, 120);
+            //if (GameDay == 1)
+            //    if (Players.Any(x => new[] { IRole.Cupid, IRole.Doppelgänger, IRole.WildChild }.Contains(x.PlayerRole)))
+            //        nightTime = Math.Max(nightTime, 120);
 
             SendWithQueue(GetLocaleString("NightTime", nightTime.ToBold()));
             SendPlayerList();
