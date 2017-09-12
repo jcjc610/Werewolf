@@ -3296,6 +3296,9 @@ namespace Werewolf_Node
                                 case IRole.Doppelgänger:
                                     ConvertToCult(target, voteCult, 0);
                                     break;
+                                case IRole.Confused:
+                                    ConvertToCult(target, voteCult, Settings.ConfusedConversionChance);
+                                    break;
                                 default:
                                     ConvertToCult(target, voteCult);
                                     break;

@@ -125,6 +125,7 @@ namespace Werewolf_Node
             AlphaWolfConversionChance = 20,
             SorcererConversionChance = 40,
             BlacksmithConversionChance = 75,
+            ConfusedConversionChance = 70,
 #else
              PlayerCountSeerCursed = 6,
             PlayerCountHarlot = 7,
@@ -163,6 +164,7 @@ namespace Werewolf_Node
             AlphaWolfConversionChance = 100,
             SorcererConversionChance = 40,
             BlacksmithConversionChance = 75,
+            ConfusedConversionChance = 70,
 #endif
 
             GameJoinTime = 180,
