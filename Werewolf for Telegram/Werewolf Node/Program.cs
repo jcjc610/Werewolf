@@ -141,7 +141,11 @@ namespace Werewolf_Node
                                 }
                                 else
                                 {
-                                    game = new Werewolf(gsi.Chat.Id, gsi.User, gsi.Chat.Title,
+                                    int guid;
+                                    do
+                                        guid = R.Next(100000);
+                                    while (Games.Any(x => x.Guid == guid));
+                                    game = new Werewolf(gsi.Chat.Id, gsi.User, gsi.Chat.Title, guid,
                                         gsi.Chaos);
                                     Games.Add(game);
                                     GamesStarted++;
@@ -161,11 +165,17 @@ namespace Werewolf_Node
                             //    break;
                             case "CallbackInfo":
                                 var ci = JsonConvert.DeserializeObject<CallbackInfo>(msg);
-                                game =
-                                    Games.FirstOrDefault(
-                                        x => x.Players?.Any(p => p != null && !p.IsDead && p.TeleUser.Id == ci.Query.From.Id) ?? false);
+                                string[] args = ci.Query.Data.Split('|');
+                                game = Games.FirstOrDefault(x => x.Guid == int.Parse(args[2]));
+                                //Games.FirstOrDefault(
+                                //    x => x.Players?.Any(p => p != null && !p.IsDead && p.TeleUser.Id == ci.Query.From.Id) ?? false);
                                 game?.HandleReply(ci.Query);
                                 break;
+                                //game =
+                                //    Games.FirstOrDefault(
+                                //        x => x.Players?.Any(p => p != null && !p.IsDead && p.TeleUser.Id == ci.Query.From.Id) ?? false);
+                                //game?.HandleReply(ci.Query);
+                                ///break;
                             case "PlayerListRequestInfo":
                                 var plri = JsonConvert.DeserializeObject<PlayerListRequestInfo>(msg);
                                 game = Games.FirstOrDefault(x => x.ChatId == plri.GroupId);
@@ -404,6 +414,7 @@ namespace Werewolf_Node
                             ChatGroup = g.ChatGroup,
                             GroupId = g.ChatId,
                             NodeId = ClientId,
+                            Guid = g.Guid,
                             State = g.IsRunning ? GameState.Running : g.IsJoining ? GameState.Joining : GameState.Dead,
                             Users = g.Players != null ? new HashSet<int>(g.Players.Where(x => !x.IsDead).Select(x => x.TeleUser.Id)) : new HashSet<int>(),
                             PlayerCount = g.Players?.Count ?? 0

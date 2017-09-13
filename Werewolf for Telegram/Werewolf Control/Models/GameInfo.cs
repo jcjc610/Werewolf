@@ -13,6 +13,7 @@ namespace Werewolf_Control.Models
     {
         public HashSet<int> Users { get; set; } = new HashSet<int>();
         public long GroupId { get; set; }
+        public int Guid { get; set; }
         public string Language { get; set; }
         public string ChatGroup { get; set; }
         public GameState State { get; set; }

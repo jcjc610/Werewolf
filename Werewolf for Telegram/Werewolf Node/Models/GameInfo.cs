@@ -13,6 +13,7 @@ namespace Werewolf_Node.Models
         public Guid NodeId { get; set; } = Program.ClientId;
         public HashSet<IPlayer> Players { get; set; } = new HashSet<IPlayer>();
         public int PlayerCount { get; set; }
+        public int Guid { get; set; }
     }
 
     public enum GameState
