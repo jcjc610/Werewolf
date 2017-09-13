@@ -1157,6 +1157,9 @@ namespace Werewolf_Node
                         if (rolesToAssign.Remove(IRole.Wolf))
                             rolesToAssign.Add(role);
                         break;
+                    // do not publish confused yet
+                    case IRole.Confused:
+                        break;
                     default:
                         rolesToAssign.Add(role);
                         break;
