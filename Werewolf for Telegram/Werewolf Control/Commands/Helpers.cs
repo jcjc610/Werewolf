@@ -191,7 +191,8 @@ namespace Werewolf_Control
                 MaxExtend = 60,
                 EnableSecretLynch = false,
                 SecretLynchShowVoters = false,
-                EnableLangPackGif = false
+                EnableLangPackGif = false,
+                FirstNightExtension = 0
             };
         }
 

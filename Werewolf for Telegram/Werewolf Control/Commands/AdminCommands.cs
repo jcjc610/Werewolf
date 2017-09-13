@@ -63,7 +63,7 @@ namespace Werewolf_Control
         public static void Config(Update update, string[] args)
         {
             var id = update.Message.Chat.Id;
-
+            var language = "English";
             //make sure the group is in the database
             using (var db = new WWContext())
             {
@@ -77,10 +77,11 @@ namespace Werewolf_Control
                 grp.BotInGroup = true;
                 grp.UserName = update.Message.Chat.Username;
                 grp.Name = update.Message.Chat.Title;
+                language = grp.Language;
                 db.SaveChanges();
             }
 
-            var menu = UpdateHandler.GetConfigMenu(update.Message.Chat.Id);
+            var menu = UpdateHandler.GetConfigMenu(update.Message.Chat.Id, language);
             Bot.Api.SendTextMessage(update.Message.From.Id, GetLocaleString("WhatToDo", GetLanguage(update.Message.From.Id)),
                 replyMarkup: menu);
         }
