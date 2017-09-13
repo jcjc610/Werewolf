@@ -226,6 +226,7 @@
           <Property Name="Flags" Type="bigint" />
           <Property Name="EnableLangPackGif" Type="bit" />
           <Property Name="SecretLynchShowVoters" Type="bit" />
+          <Property Name="DisableForceTwoMins" Type="bit" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'werewolf.dbo.GroupAdmin' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -952,6 +953,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <Property Name="Flags" Type="Int64" />
           <Property Name="EnableLangPackGif" Type="Boolean" />
           <Property Name="SecretLynchShowVoters" Type="Boolean" />
+          <Property Name="DisableForceTwoMins" Type="Boolean" />
         </EntityType>
         <EntityType Name="KillMethod">
           <Key>
@@ -1770,6 +1772,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySetMapping Name="Groups">
             <EntityTypeMapping TypeName="werewolfModel.Group">
               <MappingFragment StoreEntitySet="Group">
+                <ScalarProperty Name="DisableForceTwoMins" ColumnName="DisableForceTwoMins" />
                 <ScalarProperty Name="SecretLynchShowVoters" ColumnName="SecretLynchShowVoters" />
                 <ScalarProperty Name="EnableLangPackGif" ColumnName="EnableLangPackGif" />
                 <ScalarProperty Name="Flags" ColumnName="Flags" />

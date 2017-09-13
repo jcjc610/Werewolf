@@ -1250,6 +1250,21 @@ namespace Werewolf_Control.Handler
                                 GetLocaleString("WhatToDo", language), replyMarkup: GetConfigMenu(groupid));
                             DB.SaveChanges();
                             break;
+                        case "force120s":
+                            buttons.Add(new InlineKeyboardButton(GetLocaleString("Yes", language), $"setforce120s|{groupid}|true"));
+                            buttons.Add(new InlineKeyboardButton(GetLocaleString("No", language), $"setforce120s|{groupid}|false"));
+                            buttons.Add(new InlineKeyboardButton(Cancel, $"setforce120s|{groupid}|cancel"));
+                            menu = new InlineKeyboardMarkup(buttons.Select(x => new[] { x }).ToArray());
+                            Bot.ReplyToCallback(query,
+                                GetLocaleString("Force120sQ", language, grp.DisableForceTwoMins == true ? GetLocaleString("No", language) : GetLocaleString("Yes", language)), replyMarkup: menu);
+                            break;
+                        case "setforce120s":
+                            grp.DisableForceTwoMins = (choice == "false");
+                            Bot.Api.AnswerCallbackQuery(query.Id, GetLocaleString("Force120sA", language, grp.DisableForceTwoMins == true ? GetLocaleString("No", language) : GetLocaleString("Yes", language)));
+                            Bot.ReplyToCallback(query,
+                                GetLocaleString("WhatToDo", language), replyMarkup: GetConfigMenu(groupid));
+                            DB.SaveChanges();
+                            break;
                         case "langgif":
                             buttons.Add(new InlineKeyboardButton(GetLocaleString("Allow", language), $"setlanggif|{groupid}|true"));
                             buttons.Add(new InlineKeyboardButton(GetLocaleString("Disallow", language), $"setlanggif|{groupid}|false"));
@@ -1430,6 +1445,7 @@ namespace Werewolf_Control.Handler
             buttons.Add(new InlineKeyboardButton("Allow Cult", $"cult|{id}"));
             buttons.Add(new InlineKeyboardButton("Enable Secret Lynch", $"secretlynch|{id}"));
             buttons.Add(new InlineKeyboardButton("Enable LangPack Gifs", $"langgif|{id}"));
+            buttons.Add(new InlineKeyboardButton("Force 120s for DG/WC/Cupid", $"force120s|{id}"));
             buttons.Add(new InlineKeyboardButton("Done", $"done|{id}"));
             var twoMenu = new List<InlineKeyboardButton[]>();
             for (var i = 0; i < buttons.Count; i++)

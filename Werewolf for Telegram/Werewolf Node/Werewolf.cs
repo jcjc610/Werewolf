@@ -1300,7 +1300,7 @@ namespace Werewolf_Node
                 //force roles for testing
                 rolesToAssign[0] = IRole.Wolf;
                 rolesToAssign[1] = IRole.Villager;
-                rolesToAssign[2] = IRole.Confused;
+                rolesToAssign[2] = IRole.WildChild;
                 //rolesToAssign[3] = IRole.WolfCub;
                 //if (rolesToAssign.Count >= 5)
                 //    rolesToAssign[4] = IRole.Villager;
@@ -2699,9 +2699,9 @@ namespace Werewolf_Node
             CheckRoleChanges();     //so maybe if seer got converted to wolf, appseer will promote here
             if (CheckForGameEnd()) return;
             var nightTime = (DbGroup.NightTime ?? Settings.TimeNight);
-            //if (GameDay == 1)
-            //    if (Players.Any(x => new[] { IRole.Cupid, IRole.Doppelgänger, IRole.WildChild }.Contains(x.PlayerRole)))
-            //        nightTime = Math.Max(nightTime, 120);
+            if (GameDay == 1)
+                if (DbGroup.DisableForceTwoMins == true && Players.Any(x => new[] { IRole.Cupid, IRole.Doppelgänger, IRole.WildChild }.Contains(x.PlayerRole)))
+                    nightTime = Math.Max(nightTime, 120);
 
             SendWithQueue(GetLocaleString("NightTime", nightTime.ToBold()));
             SendPlayerList();

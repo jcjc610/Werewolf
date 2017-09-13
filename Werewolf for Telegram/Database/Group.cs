@@ -52,6 +52,7 @@ namespace Database
         public Nullable<long> Flags { get; set; }
         public Nullable<bool> EnableLangPackGif { get; set; }
         public Nullable<bool> SecretLynchShowVoters { get; set; }
+        public Nullable<bool> DisableForceTwoMins { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Game> Games { get; set; }
