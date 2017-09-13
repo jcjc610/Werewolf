@@ -2702,7 +2702,7 @@ namespace Werewolf_Node
             if (GameDay == 1)
                 if (Players.Any(x => new[] { IRole.Cupid, IRole.Doppelgänger, IRole.WildChild }.Contains(x.PlayerRole)))
                     //nightTime = Math.Max(nightTime, 120);
-                    nightTime = nightTime + DbGroup.FirstNightExtension == null ? 0 : DbGroup.FirstNightExtension.Value;
+                    nightTime = nightTime + (DbGroup.FirstNightExtension == null ? 0 : DbGroup.FirstNightExtension.Value);
 
             SendWithQueue(GetLocaleString("NightTime", nightTime.ToBold()));
             SendPlayerList();
