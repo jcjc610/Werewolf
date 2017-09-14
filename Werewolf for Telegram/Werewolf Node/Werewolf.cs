@@ -1508,8 +1508,9 @@ namespace Werewolf_Node
                     // ReSharper disable once UnusedVariable
                     var result = Program.Send(msg, p.Id, true).Result;
                 }
-                catch (AggregateException) //is this really only because of the message not being able to be sent? and should it really smite the player? maybe send some message to Para...
+                catch (AggregateException e) //is this really only because of the message not being able to be sent? and should it really smite the player? maybe send some message to Para...
                 {
+                    LogAllExceptions(e);
                     SendWithQueue(GetLocaleString("PlayerNoPM", p.GetName()));
                     FleePlayer(p.TeleUser.Id);
                 }
