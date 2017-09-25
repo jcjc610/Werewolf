@@ -698,9 +698,13 @@ namespace Werewolf_Control
                                 stat.MostLynchFirstPercent = day1lynch1.pct;
                             }
 
+                            Content += $"No. of Games: {gamesPlayed}\n";
+                            Content += $"Best Survivor: {survivor1.Name} ({(int)survivor1.pct}%)\nMost Killed 1st Night: {night1death1.Name} ({night1death1.pct}%)\n";
+                            Content += $"Most Lynched 1st Day: {day1lynch1.Name} ({day1lynch1.pct}%)";
+
 
                         }
-                        
+
                         DB.SaveChanges();
                         Console.WriteLine("Done");
                         Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, replyToMessageId: u.Message.MessageId);
