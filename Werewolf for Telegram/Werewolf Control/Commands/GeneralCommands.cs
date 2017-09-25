@@ -628,7 +628,7 @@ namespace Werewolf_Control
                         Content += $"Best Survivor: {bestSurvivor} ({bestSurvivorPercent}%)\nMost Killed 1st Night: {mostKilledFirstNight} ({mostKilledFirstPercent}%)\n";
                         Content += $"Most Lynched 1st Day: {mostLynchedFirstDay} ({mostLynchedFirstPercent}%)";
 
-                        /* later
+                        
                         if (u.Message.Chat.Id < 0)
                         {
                             // group
@@ -658,10 +658,10 @@ namespace Werewolf_Control
                                 // later
                             }
                             var gamesPlayed = grp.Games.Count;
-                            night1death = db.GroupNight1Death(groupid).FirstOrDefault();
-                            day1lynch = db.GroupDay1Lynch(groupid).FirstOrDefault();
-                            day1death = db.GroupDay1Death(groupid).FirstOrDefault();
-                            survivor = db.GroupSurvivor(groupid).FirstOrDefault();
+                            var night1death1 = db.GroupNight1Death(groupid).FirstOrDefault();
+                            var day1lynch1 = db.GroupDay1Lynch(groupid).FirstOrDefault();
+                            var day1death1 = db.GroupDay1Death(groupid).FirstOrDefault();
+                            var survivor1 = db.GroupSurvivor(groupid).FirstOrDefault();
 
                             if (stat == null)
                             {
@@ -675,33 +675,33 @@ namespace Werewolf_Control
                             //stat.PlayersKilled = db.GamePlayers.Count(x => !x.Survived);
                             //stat.PlayersSurvived = db.GamePlayers.Count(x => x.Survived);
 
-                            if (survivor != null)
+                            if (survivor1 != null)
                             {
-                                stat.BestSurvivor = survivor.Name;
-                                stat.BestSurvivorPercent = (int)survivor.pct;
+                                stat.BestSurvivor = survivor1.Name;
+                                stat.BestSurvivorPercent = (int)survivor1.pct;
                             }
                             stat.GamesPlayed = gamesPlayed;
                             stat.LastRun = DateTime.Now;
-                            if (day1death != null)
+                            if (day1death1 != null)
                             {
-                                stat.MostDeadFirstDay = day1death.Name;
-                                stat.MostDeadFirstPercent = day1death.pct;
+                                stat.MostDeadFirstDay = day1death1.Name;
+                                stat.MostDeadFirstPercent = day1death1.pct;
                             }
-                            if (night1death != null)
+                            if (night1death1 != null)
                             {
-                                stat.MostKilledFirstNight = night1death.Name;
-                                stat.MostKilledFirstPercent = night1death.pct;
+                                stat.MostKilledFirstNight = night1death1.Name;
+                                stat.MostKilledFirstPercent = night1death1.pct;
                             }
-                            if (day1lynch != null)
+                            if (day1lynch1 != null)
                             {
-                                stat.MostLynchedFirstNight = day1lynch.Name;
-                                stat.MostLynchFirstPercent = day1lynch.pct;
+                                stat.MostLynchedFirstNight = day1lynch1.Name;
+                                stat.MostLynchFirstPercent = day1lynch1.pct;
                             }
 
 
                         }
-                        later */
-                        // DB.SaveChanges();
+                        
+                        DB.SaveChanges();
                         Console.WriteLine("Done");
                         Bot.Api.SendTextMessage(u.Message.Chat.Id, Content, replyToMessageId: u.Message.MessageId);
                     }
