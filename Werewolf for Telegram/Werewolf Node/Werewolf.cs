@@ -1623,7 +1623,7 @@ namespace Werewolf_Node
                 //seer is dead, promote app seer
                 confusedAppSeer.HasDayAction = false;
                 confusedAppSeer.HasNightAction = true;
-                aps.HiddenConfusedRole = IRole.Seer;
+                confusedAppSeer.HiddenConfusedRole = IRole.Seer;
                 //notify
                 Send(GetLocaleString("ApprenticeNowSeer", ds?.GetName() ?? GetDescription(IRole.Seer)), confusedAppSeer.Id);
             }
