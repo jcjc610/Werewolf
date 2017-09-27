@@ -675,7 +675,7 @@ namespace Werewolf_Node
                         }
                     }
 
-                    if (player.PlayerRole == IRole.Blacksmith)
+                    if (!(player.PlayerRole == IRole.Confused && choice == "yes"))
                         ReplyToCallback(query, GetLocaleString("ChoiceAccepted"));
                     else
                         ReplyToCallback(query, GetLocaleString("ChoiceAcceptedConfusedFailed"));
@@ -2619,7 +2619,7 @@ namespace Werewolf_Node
                     var possibleRoles = Players.Where(x => !x.IsDead && x.Id != confusedDet.Id && x.PlayerRole != IRole.Detective).Select(x => x.PlayerRole).ToList();
                     possibleRoles.Shuffle();
                     possibleRoles.Shuffle();
-                    Send(GetLocaleString("DetectiveSnoop", check.GetName(), GetDescription(possibleRoles[0]), confusedDet.Id));
+                    Send(GetLocaleString("DetectiveSnoop", check.GetName(), GetDescription(possibleRoles[0])), confusedDet.Id);
                 }
             }
 
