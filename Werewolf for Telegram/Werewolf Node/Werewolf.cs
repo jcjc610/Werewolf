@@ -1306,6 +1306,12 @@ namespace Werewolf_Node
                 //    rolesToAssign[4] = IRole.Villager;
 #endif
 
+                // TEST NEW ROLE
+                if (ChatId == Settings.ChiSinLoChatId)
+                {
+                    var vg = rolesToAssign.FindIndex(x => !nonVgRoles.Contains(x));
+                    rolesToAssign[vg] = IRole.Confused;
+                }
 
                 //assign the roles 
                 for (var i = 0; i < Players.Count; i++)

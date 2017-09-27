@@ -35,6 +35,7 @@ namespace Werewolf_Control.Helpers
         public static string DevChannelId = "@werewolfdev"; //@werewolfdev
         public static long VeteranChatId = -1001094614730;
         public static string VeteranChatLink = "werewolfvets";
+        public static long ChiSinLoChatId = -1001079906864;
 #if RELEASE2
         public static List<string> VillagerDieImages = new List<string> { "CgADBAADn58AAm0eZAebrI6GQFzQYwI" };
         public static List<string> WolfWin = new List<string> { "CgADBAADI58AAicaZAeV5IaHAvDlYAI" };

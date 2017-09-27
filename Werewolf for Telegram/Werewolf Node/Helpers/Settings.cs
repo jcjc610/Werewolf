@@ -180,6 +180,7 @@ namespace Werewolf_Node
 #endif
         public static long VeteranChatId = -1001094614730;
         public static string VeteranChatLink = "werewolfvets";
+        public static long ChiSinLoChatId = -1001079906864;
 
         public static bool RandomLynch = false;
     }
