@@ -2460,7 +2460,10 @@ namespace Werewolf_Node
                             AddAchievement(lynched, Achievements.LackOfTrust);
                         if (lynched.PlayerRole == IRole.Prince && lynched.HasUsedAbility)
                             AddAchievement(lynched, Achievements.SpoiledRichBrat);
-                        SendWithQueue(GetLocaleString("LynchKill", lynched.GetName(), DbGroup.ShowRoles == false ? "" : $"{lynched.GetName()} {GetLocaleString("Was")} {GetDescription(lynched.PlayerRole)}"));
+                        if (lynched.PlayerRole == IRole.Confused)
+                            SendWithQueue(GetLocaleString("LynchKillConfused", lynched.GetName(), DbGroup.ShowRoles == false ? "" : GetLocaleString("ConfusedLynched", $"{lynched.GetName()}", $"{GetDescription(lynched.HiddenConfusedRole)}", $"{GetDescription(lynched.PlayerRole)}")));
+                        else
+                            SendWithQueue(GetLocaleString("LynchKill", lynched.GetName(), DbGroup.ShowRoles == false ? "" : $"{lynched.GetName()} {GetLocaleString("Was")} {GetDescription(lynched.PlayerRole)}"));
 
                         if (lynched.InLove)
                             KillLover(lynched);
