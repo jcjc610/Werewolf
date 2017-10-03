@@ -71,7 +71,7 @@ namespace Werewolf_Node.Models
         public int DayCult { get; set; } = 0;
         public int RoleModel { get; set; } = 0;
         public IRole KilledByRole { get; set; }
-        public IRole HiddenConfusedRole { get; set; }
+        public IRole HiddenConfusedRole { get; set; } = IRole.Seer;
         public bool DiedByVisitingKiller { get; set; } = false;
         public bool DiedByVisitingVictim { get; set; } = false;
         public bool WasSavedLastNight { get; set; } = false;
