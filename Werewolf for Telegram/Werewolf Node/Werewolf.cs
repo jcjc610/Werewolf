@@ -1880,6 +1880,11 @@ namespace Werewolf_Node
                         if (rm.PlayerRole != IRole.Cultist)
                             p.PlayerRole = rm.PlayerRole;
                     }
+
+                    if (rm.PlayerRole == IRole.Confused)
+                    {
+                        p.HiddenConfusedRole = rm.HiddenConfusedRole;
+                    }
                     p.ChangedRolesCount++;
 
                     if (!new[] { IRole.Mason, IRole.Wolf, IRole.AlphaWolf, IRole.WolfCub, IRole.Cultist, IRole.WildChild }.Contains(p.PlayerRole))
@@ -1887,7 +1892,7 @@ namespace Werewolf_Node
                         //tell them their new role
                         Send(GetRoleInfo(p.PlayerRole), p.Id);
                     }
-                    switch (p.PlayerRole)
+                    switch (p.PlayerRole != IRole.Confused ? p.PlayerRole : p.HiddenConfusedRole )
                     {
                         case IRole.Villager:
                         case IRole.Cursed:
@@ -2052,7 +2057,8 @@ namespace Werewolf_Node
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-
+                    if (p.PlayerRole == IRole.Confused)
+                        p.Team = ITeam.Village;
 
                 }
             }
