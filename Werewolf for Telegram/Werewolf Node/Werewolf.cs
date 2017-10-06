@@ -1424,6 +1424,7 @@ namespace Werewolf_Node
                             rolesList.Remove(IRole.Tanner);
                         if (allowFool != true)
                             rolesList.Remove(IRole.Fool);
+                        rolesList.Remove(IRole.Confused);
 
                         p.HiddenConfusedRole = rolesList.ElementAt(Program.R.Next(rolesList.Count()));
                         
