@@ -93,17 +93,17 @@ namespace Werewolf_Control.Helpers
         /// <summary>
         /// How many games are allowed for any given node
         /// </summary>
-        public static int MaxGamesPerNode = 4;
+        public static int MaxGamesPerNode = 10;
 
         /// <summary>
         /// How many games on each node before starting a new node (to be added later)
         /// </summary>
 #if DEBUG
-        public static int NewNodeThreshhold = 5;
+        public static int NewNodeThreshhold = 8;
 #else
-        public static int NewNodeThreshhold = 3;
+        public static int NewNodeThreshhold = 8;
 #endif
-        public static int ShutDownNodesAt = 5;
+        public static int ShutDownNodesAt = 10;
 
         public static int
 #if DEBUG

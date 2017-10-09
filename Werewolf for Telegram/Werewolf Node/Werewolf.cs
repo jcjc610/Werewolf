@@ -4468,7 +4468,7 @@ namespace Werewolf_Node
                     {
                         var choices = options.Select(x => new[] { new InlineKeyboardButton(x.Name, $"vote|{_deeplink}|{x.Id}") }).ToList();
                         choices.Add(new[] { new InlineKeyboardButton("Skip", $"vote|{_deeplink}|-1") });
-                        SendMenu(choices, confusedGunner, GetLocaleString("AskShoot", gunner.Bullet), QuestionType.Shoot);
+                        SendMenu(choices, confusedGunner, GetLocaleString("AskShoot", confusedGunner.Bullet), QuestionType.Shoot);
                     }
                 }
             }
