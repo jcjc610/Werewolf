@@ -1313,6 +1313,7 @@ namespace Werewolf_Node
                     {
                         var vg = rolesToAssign.FindIndex(x => !nonVgRoles.Contains(x));
                         rolesToAssign[vg] = IRole.Confused;
+                        rolesToAssign.Add(IRole.Villager);
                     }
                 }
 
