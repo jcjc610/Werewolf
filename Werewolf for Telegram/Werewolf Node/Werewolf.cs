@@ -1307,7 +1307,7 @@ namespace Werewolf_Node
 #endif
 
                 // TEST NEW ROLE
-                if (ChatId == Settings.ChiSinLoChatId)
+                if (ChatId == Settings.ChiSinLoChatId || ChatId == Settings.DesertedChatId)
                 {
                     if (Program.R.Next(100) < 30)
                     {
