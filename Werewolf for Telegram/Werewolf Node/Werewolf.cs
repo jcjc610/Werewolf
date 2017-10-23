@@ -1892,6 +1892,12 @@ namespace Werewolf_Node
                     if (!new[] { IRole.Mason, IRole.Wolf, IRole.AlphaWolf, IRole.WolfCub, IRole.Cultist, IRole.WildChild }.Contains(p.PlayerRole))
                     {
                         //tell them their new role
+                        if (p.PlayerRole == IRole.Confused)
+                        {
+                            if (!new[] { IRole.Mason, IRole.Wolf, IRole.AlphaWolf, IRole.WolfCub, IRole.Cultist, IRole.WildChild }.Contains(p.HiddenConfusedRole))
+                            {
+                                Send(GetRoleInfo(p.HiddenConfusedRole), p.Id);
+                            }
                         Send(GetRoleInfo(p.PlayerRole), p.Id);
                     }
                     switch (p.PlayerRole != IRole.Confused ? p.PlayerRole : p.HiddenConfusedRole )
