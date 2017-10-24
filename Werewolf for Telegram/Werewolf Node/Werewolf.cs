@@ -1898,7 +1898,8 @@ namespace Werewolf_Node
                             {
                                 Send(GetRoleInfo(p.HiddenConfusedRole), p.Id);
                             }
-                        Send(GetRoleInfo(p.PlayerRole), p.Id);
+                            Send(GetRoleInfo(p.PlayerRole), p.Id);
+                        }
                     }
                     switch (p.PlayerRole != IRole.Confused ? p.PlayerRole : p.HiddenConfusedRole )
                     {
