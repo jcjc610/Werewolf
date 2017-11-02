@@ -1,3 +1,4 @@
+using Database;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Database;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 using Werewolf_Node.Helpers;
@@ -1898,6 +1898,9 @@ namespace Werewolf_Node
                             {
                                 Send(GetRoleInfo(p.HiddenConfusedRole), p.Id);
                             }
+                        }
+                        else
+                        {
                             Send(GetRoleInfo(p.PlayerRole), p.Id);
                         }
                     }
