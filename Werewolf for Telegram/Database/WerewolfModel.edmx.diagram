@@ -52,6 +52,7 @@
         <AssociationConnector Association="werewolfModel.FK_Action_Game" />
         <AssociationConnector Association="werewolfModel.FK_Action_Initiator" />
         <AssociationConnector Association="werewolfModel.FK_Action_Receiver" />
+        <EntityTypeShape EntityType="werewolfModel.ConfusedGroup" Width="1.5" PointX="5.375" PointY="4.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -102,6 +102,16 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'werewolf.dbo.ConfusedGroup' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ConfusedGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="TelegramId" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TelegramId" Type="bigint" Nullable="false" />
+        </EntityType>
         <EntityType Name="DailyCount">
           <Key>
             <PropertyRef Name="Id" />
@@ -131,18 +141,18 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="VariantId" Type="int" Nullable="false" />
-          <Property Name="StartGame" Type="nvarchar" MaxLength="50" />
-          <Property Name="StartChaosGame" Type="nvarchar" MaxLength="50" />
-          <Property Name="VillagerDieImages" Type="nvarchar" MaxLength="50" />
-          <Property Name="WolfWin" Type="nvarchar" MaxLength="50" />
-          <Property Name="WolvesWin" Type="nvarchar" MaxLength="50" />
-          <Property Name="VillagersWin" Type="nvarchar" MaxLength="50" />
-          <Property Name="TannerWin" Type="nvarchar" MaxLength="50" />
-          <Property Name="LoversWin" Type="nvarchar" MaxLength="50" />
-          <Property Name="SerialKillerWins" Type="nvarchar" MaxLength="50" />
-          <Property Name="CultWins" Type="nvarchar" MaxLength="50" />
-          <Property Name="NoWinner" Type="nvarchar" MaxLength="50" />
-          <Property Name="VillagerDieBySK" Type="nvarchar" MaxLength="50" />
+          <Property Name="StartGame" Type="nvarchar" MaxLength="1000" />
+          <Property Name="StartChaosGame" Type="nvarchar" MaxLength="1000" />
+          <Property Name="VillagerDieImages" Type="nvarchar" MaxLength="1000" />
+          <Property Name="WolfWin" Type="nvarchar" MaxLength="1000" />
+          <Property Name="WolvesWin" Type="nvarchar" MaxLength="1000" />
+          <Property Name="VillagersWin" Type="nvarchar" MaxLength="1000" />
+          <Property Name="TannerWin" Type="nvarchar" MaxLength="1000" />
+          <Property Name="LoversWin" Type="nvarchar" MaxLength="1000" />
+          <Property Name="SerialKillerWins" Type="nvarchar" MaxLength="1000" />
+          <Property Name="CultWins" Type="nvarchar" MaxLength="1000" />
+          <Property Name="NoWinner" Type="nvarchar" MaxLength="1000" />
+          <Property Name="VillagerDieBySK" Type="nvarchar" MaxLength="1000" />
         </EntityType>
         <EntityType Name="GameKill">
           <Key>
@@ -712,6 +722,12 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           <EntitySet Name="LanguageVariant" EntityType="Self.LanguageVariant" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Player" EntityType="Self.Player" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PlayerStats" EntityType="Self.PlayerStats" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ConfusedGroup" EntityType="Self.ConfusedGroup" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ConfusedGroup].[Id] AS [Id], 
+    [ConfusedGroup].[TelegramId] AS [TelegramId]
+    FROM [dbo].[ConfusedGroup] AS [ConfusedGroup]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="GroupAdmin" EntityType="Self.GroupAdmin" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [GroupAdmin].[GroupId] AS [GroupId], 
@@ -1261,6 +1277,7 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             <End Role="Player" EntitySet="Players" />
             <End Role="Action" EntitySet="Actions" />
           </AssociationSet>
+          <EntitySet Name="ConfusedGroups" EntityType="werewolfModel.ConfusedGroup" />
         </EntityContainer>
         <ComplexType Name="getPlayTime_Result">
           <Property Type="Int32" Name="Average" Nullable="true" />
@@ -1619,19 +1636,19 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="VariantId" Type="Int32" Nullable="false" />
-          <Property Name="StartGame" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="StartChaosGame" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="VillagerDieImages" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="WolfWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="WolvesWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="VillagersWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="TannerWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="LoversWin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SerialKillerWins" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="CultWins" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="NoWinner" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StartGame" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="StartChaosGame" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="VillagerDieImages" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="WolfWin" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="WolvesWin" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="VillagersWin" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="TannerWin" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="LoversWin" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="SerialKillerWins" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="CultWins" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="NoWinner" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="LanguageVariant" Relationship="werewolfModel.FK_GameGif_LanguageVariant" FromRole="GameGif" ToRole="LanguageVariant" />
-          <Property Name="VillagerDieBySK" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="VillagerDieBySK" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_GameGif_LanguageVariant">
           <End Type="werewolfModel.LanguageVariant" Role="LanguageVariant" Multiplicity="1" />
@@ -1717,6 +1734,14 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ConfusedGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="TelegramId" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TelegramId" Type="Int64" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2269,6 +2294,14 @@ warning 6002: The table/view 'werewolf.dbo.v_IdleKill24HoursMain' does not have 
                 <ScalarProperty Name="InitiatorId" ColumnName="InitiatorId" />
                 <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
                 <ScalarProperty Name="GameId" ColumnName="GameId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConfusedGroups">
+            <EntityTypeMapping TypeName="werewolfModel.ConfusedGroup">
+              <MappingFragment StoreEntitySet="ConfusedGroup">
+                <ScalarProperty Name="TelegramId" ColumnName="TelegramId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

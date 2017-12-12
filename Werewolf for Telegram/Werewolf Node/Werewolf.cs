@@ -39,6 +39,7 @@ namespace Werewolf_Node
         public Locale Locale;
         public Group DbGroup;
         public GameGif DbGameGif = null;
+        public List<long> DbConfusedGroups = new List<long>();
         private bool _playerListChanged = true, _silverSpread;
         private DateTime _timeStarted;
         public readonly IRole[] WolfRoles = { IRole.Wolf, IRole.AlphaWolf, IRole.WolfCub };
@@ -65,6 +66,7 @@ namespace Werewolf_Node
                     ChatGroup = chatGroup;
                     ChatId = chatid;
                     DbGroup = db.Groups.FirstOrDefault(x => x.GroupId == ChatId);
+                    DbConfusedGroups = db.ConfusedGroups.Select(x => x.TelegramId).ToList();
 
                     if (DbGroup == null)
                     {
@@ -1307,7 +1309,8 @@ namespace Werewolf_Node
 #endif
 
                 // TEST NEW ROLE
-                if (ChatId == Settings.ChiSinLoChatId || ChatId == Settings.DesertedChatId || ChatId == Settings.Mud9CriminalsChatId)
+                if (DbConfusedGroups.Contains(ChatId))
+                // if (ChatId == Settings.ChiSinLoChatId || ChatId == Settings.DesertedChatId || ChatId == Settings.Mud9CriminalsChatId)
                 {
                     if (Program.R.Next(100) < 30)
                     {
@@ -1679,7 +1682,7 @@ namespace Werewolf_Node
                 }
             }
 
-            if (confused != null && (confused.HiddenConfusedRole == IRole.WildChild || confused.HiddenConfusedRole == IRole.Doppelgänger))
+            if (confused != null && (confused.HiddenConfusedRole == IRole.WildChild || confused.HiddenConfusedRole == IRole.Doppelgänger) && confused.RoleModel == 0)
             {
                 var choiceid = ChooseRandomPlayerId(confused);
                 var choice = Players.FirstOrDefault(x => x.Id == choiceid);
@@ -1851,7 +1854,7 @@ namespace Werewolf_Node
                     {
                         confusedWildChild.HiddenConfusedRole = IRole.Wolf;
                         confusedWildChild.HasNightAction = true;
-                        wc.HasDayAction = false;
+                        confusedWildChild.HasDayAction = false;
                         Send(GetLocaleString("WildChildTransform", rm.GetName(), ""), confusedWildChild.Id);
                     }
                 }
