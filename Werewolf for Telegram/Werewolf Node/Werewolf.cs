@@ -1957,10 +1957,13 @@ namespace Werewolf_Node
                             p.HasDayAction = false;
                             p.HasNightAction = false;
                             p.Team = ITeam.Village;
-                            foreach (var w in Players.Where(x => x.PlayerRole == IRole.Mason & !x.IsDead && x.Id != p.Id))
+                            if (p.PlayerRole != IRole.Confused)
                             {
-                                Send(GetLocaleString("DGToMason", $"{p.GetName()}"), w.Id);
-                                teammates += $"{w.GetName()}" + ", ";
+                                foreach (var w in Players.Where(x => x.PlayerRole == IRole.Mason & !x.IsDead && x.Id != p.Id))
+                                {
+                                    Send(GetLocaleString("DGToMason", $"{p.GetName()}"), w.Id);
+                                    teammates += $"{w.GetName()}" + ", ";
+                                }
                             }
                             Send(GetLocaleString("DGTransformToMason", rm.GetName(), teammates), p.Id);
                             break;
@@ -1981,8 +1984,11 @@ namespace Werewolf_Node
                             p.HasNightAction = true;
                             p.HasDayAction = false;
                             var bh = Players.FirstOrDefault(x => x.PlayerRole == IRole.Beholder & !x.IsDead);
-                            if (bh != null)
-                                Send(GetLocaleString("BeholderNewSeer", $"{p.GetName()}", rm.GetName() ?? GetDescription(IRole.Seer)), bh.Id);
+                            if (p.PlayerRole != IRole.Confused)
+                            {
+                                if (bh != null)
+                                    Send(GetLocaleString("BeholderNewSeer", $"{p.GetName()}", rm.GetName() ?? GetDescription(IRole.Seer)), bh.Id);
+                            }
                             break;
                         case IRole.GuardianAngel:
 
@@ -2017,10 +2023,13 @@ namespace Werewolf_Node
                             p.Team = ITeam.Wolf;
                             p.HasNightAction = true;
                             p.HasDayAction = false;
-                            foreach (var w in Players.GetPlayersForRoles(WolfRoles, exceptPlayer: p))
+                            if (p.PlayerRole != IRole.Confused)
                             {
-                                Send(GetLocaleString("DGToWolf", $"{p.GetName()}"), w.Id);
-                                teammates += $"{w.GetName()}" + ", ";
+                                foreach (var w in Players.GetPlayersForRoles(WolfRoles, exceptPlayer: p))
+                                {
+                                    Send(GetLocaleString("DGToWolf", $"{p.GetName()}"), w.Id);
+                                    teammates += $"{w.GetName()}" + ", ";
+                                }
                             }
                             switch (p.PlayerRole)
                             {
@@ -2044,10 +2053,13 @@ namespace Werewolf_Node
                             p.HasDayAction = false;
                             p.HasNightAction = true;
                             p.Team = ITeam.Cult;
-                            foreach (var w in Players.Where(x => x.PlayerRole == IRole.Cultist & !x.IsDead && x.Id != p.Id))
+                            if (p.PlayerRole != IRole.Confused)
                             {
-                                Send(GetLocaleString("DGToCult", $"{p.GetName()}"), w.Id);
-                                teammates += $"{w.GetName()}" + ", ";
+                                foreach (var w in Players.Where(x => x.PlayerRole == IRole.Cultist & !x.IsDead && x.Id != p.Id))
+                                {
+                                    Send(GetLocaleString("DGToCult", $"{p.GetName()}"), w.Id);
+                                    teammates += $"{w.GetName()}" + ", ";
+                                }
                             }
                             Send(GetLocaleString("DGTransformToCult", rm.GetName(), teammates), p.Id);
                             break;
