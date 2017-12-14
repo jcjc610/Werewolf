@@ -1163,6 +1163,7 @@ namespace Werewolf_Node
                         break;
                     // do not publish confused yet
                     case IRole.Confused:
+                    case IRole.Joker:
                         break;
                     default:
                         rolesToAssign.Add(role);
