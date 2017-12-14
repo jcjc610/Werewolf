@@ -44,6 +44,7 @@ namespace Werewolf_Node
         private DateTime _timeStarted;
         public readonly IRole[] WolfRoles = { IRole.Wolf, IRole.AlphaWolf, IRole.WolfCub };
         public List<long> HaveExtended = new List<long>();
+        public bool JokerDead = false;
         private string _deeplink;
         #region Constructor
         /// <summary>
@@ -379,6 +380,7 @@ namespace Werewolf_Node
                 {
                     GameDay++;
                     if (!IsRunning) break;
+                    if (JokerDead) JokerFun();
                     CheckRoleChanges();
                     CheckLongHaul();
                     NightCycle();
@@ -1320,6 +1322,17 @@ namespace Werewolf_Node
                     }
                 }
 
+                if (ChatId == Settings.Mud9CriminalsChatId)
+                {
+                    if (Program.R.Next(100) < 50)
+                    {
+                        Send("NEW ROLE BETA TESTING, EXPECT ERRORS, TAG JEFF WHEN ERRORS OCCUR");
+                        var vg = rolesToAssign.FindIndex(x => !nonVgRoles.Contains(x));
+                        rolesToAssign[vg] = IRole.Joker;
+                        rolesToAssign.Add(IRole.Villager);
+                    }
+                }
+
                 //assign the roles 
                 for (var i = 0; i < Players.Count; i++)
                 {
@@ -1429,6 +1442,7 @@ namespace Werewolf_Node
                         if (allowFool != true)
                             rolesList.Remove(IRole.Fool);
                         rolesList.Remove(IRole.Confused);
+                        rolesList.Remove(IRole.Joker);
 
                         p.HiddenConfusedRole = rolesList.ElementAt(Program.R.Next(rolesList.Count()));
                         
@@ -1499,17 +1513,22 @@ namespace Werewolf_Node
                                 throw new ArgumentOutOfRangeException();
                         }
                         break;
+                    case IRole.Joker:
+                        p.HasDayAction = false;
+                        p.HasNightAction = false;
+                        p.Team = ITeam.Neutral;
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
         }
 
-        private void NotifyRoles()
+        private void NotifyRoles(bool JokerHadFun = false)
         {
             if (Players == null) return; //how the hell?
-            //notify each player
-            foreach (var p in Players.ToList())
+            //notify each 
+            foreach (var p in (!JokerHadFun) ? Players.ToList() : Players.Where(x => !x.IsDead).ToList())
             {
                 if (p?.PlayerRole == null) continue;
                 var msg = "";
@@ -2702,6 +2721,186 @@ namespace Werewolf_Node
             CheckRoleChanges();
         }
 
+
+        private void JokerFun()
+        {
+            // WTF is this role
+            if (!IsRunning) return;
+            if (CheckForGameEnd(true)) return;
+            if (!JokerDead) return;
+            Send(GetLocaleString("JokerKilled"));
+            var newPlayers = Players;
+            // var newAlivePlayers = newPlayers.Where(x => !x.IsDead).ToList();
+            List<IRole> newRoles = Players.Select(x => x.PlayerRole).ToList();
+            newRoles.Shuffle();
+            newRoles.Shuffle();
+            Stack<IRole> newRolesStack = new Stack<IRole>(newRoles);
+            foreach (IPlayer p in newPlayers.Where(x => !x.IsDead))
+            {
+                p.PlayerRole = newRolesStack.Pop();
+                p.ChangedRolesCount++;
+                switch (p.PlayerRole)
+                {
+                    case IRole.Villager:
+                    case IRole.Cursed:
+                    case IRole.Drunk:
+                    case IRole.Beholder:
+                    case IRole.ApprenticeSeer:
+                    case IRole.Traitor:
+                    case IRole.Mason:
+                    case IRole.Hunter:
+                    case IRole.Mayor:
+                    case IRole.ClumsyGuy:
+                    case IRole.Prince:
+                    case IRole.Cupid:
+                        p.HasDayAction = false;
+                        p.HasNightAction = false;
+                        p.Team = ITeam.Village;
+                        break;
+                    case IRole.Fool:
+                    case IRole.Harlot:
+                    case IRole.CultistHunter:
+                    case IRole.Seer:
+                    case IRole.GuardianAngel:
+                    case IRole.Blacksmith:
+                        p.Team = ITeam.Village;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
+                    case IRole.WildChild:
+                        p.Team = ITeam.Village;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel;
+                        break;
+                    case IRole.Doppelgänger:
+                        p.Team = ITeam.Neutral;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel;
+                        break;
+                    case IRole.Detective:
+                        p.Team = ITeam.Village;
+                        p.HasDayAction = true;
+                        p.HasNightAction = false;
+                        break;
+                    case IRole.Gunner:
+                        p.Team = ITeam.Village;
+                        p.HasDayAction = true;
+                        p.HasNightAction = false;
+                        p.Bullet = 2;
+                        break;
+                    case IRole.Sorcerer:
+                    case IRole.AlphaWolf:
+                    case IRole.WolfCub:
+                    case IRole.Wolf:
+                        p.Team = ITeam.Wolf;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
+                    case IRole.Tanner:
+                        p.Team = ITeam.Tanner;
+                        p.HasDayAction = false;
+                        p.HasNightAction = false;
+                        break;
+                    case IRole.Cultist:
+                        p.HasDayAction = false;
+                        p.HasNightAction = true;
+                        p.Team = ITeam.Cult;
+                        break;
+                    case IRole.SerialKiller:
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        p.Team = ITeam.SerialKiller;
+                        break;
+                    case IRole.Confused:
+                        p.HiddenConfusedRole = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused).HiddenConfusedRole;
+                        switch (p.HiddenConfusedRole)
+                        {
+                            case IRole.Villager:
+                            case IRole.Cursed:
+                            case IRole.Drunk:
+                            case IRole.Beholder:
+                            case IRole.ApprenticeSeer:
+                            case IRole.Traitor:
+                            case IRole.Mason:
+                            case IRole.Hunter:
+                            case IRole.Mayor:
+                            case IRole.ClumsyGuy:
+                            case IRole.Prince:
+                                p.HasDayAction = false;
+                                p.HasNightAction = false;
+                                p.Team = ITeam.Village;
+                                break;
+                            case IRole.Fool:
+                            case IRole.Harlot:
+                            case IRole.CultistHunter:
+                            case IRole.Seer:
+                            case IRole.GuardianAngel:
+                            case IRole.WildChild:
+                            case IRole.Cupid:
+                            case IRole.Blacksmith:
+                                p.Team = ITeam.Village;
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                break;
+                            case IRole.Doppelgänger:
+                                p.Team = ITeam.Village;
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                break;
+                            case IRole.Detective:
+                            case IRole.Gunner:
+                                p.Team = ITeam.Village;
+                                p.HasDayAction = true;
+                                p.HasNightAction = false;
+                                break;
+                            case IRole.Sorcerer:
+                            case IRole.AlphaWolf:
+                            case IRole.WolfCub:
+                            case IRole.Wolf:
+                                p.Team = ITeam.Village;
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                break;
+                            case IRole.Tanner:
+                                p.Team = ITeam.Village;
+                                p.HasDayAction = false;
+                                p.HasNightAction = false;
+                                break;
+                            case IRole.Cultist:
+                                p.HasDayAction = false;
+                                p.HasNightAction = true;
+                                p.Team = ITeam.Village;
+                                break;
+                            case IRole.SerialKiller:
+                                p.HasNightAction = true;
+                                p.HasDayAction = false;
+                                p.Team = ITeam.Village;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            NotifyRoles(true);
+            using (var db = new WWContext())
+            {
+                foreach (var p in Players.Where(x => !x.IsDead))
+                {
+                    //make sure they have DB entries
+                    var dgp = GetDBGamePlayer(p, db);
+                    dgp.Role = p.PlayerRole.ToString();
+                    db.SaveChanges();
+
+                    //new Task(() => { ImageHelper.GetUserImage(p.TeleUser.Id); }).Start();
+                }
+            }
+        }
+
         private void NightCycle()
         {
             if (!IsRunning) return;
@@ -2709,6 +2908,7 @@ namespace Werewolf_Node
             Time = GameTime.Night;
             var nightStart = DateTime.Now;
             if (CheckForGameEnd(true)) return;
+            JokerDead = false;
             foreach (var p in Players)
             {
                 p.Choice = 0;
@@ -3062,6 +3262,23 @@ namespace Werewolf_Node
                                         }
                                     }
                                     break;
+                                case IRole.Joker:
+                                    if (bitten)
+                                    {
+                                        BitePlayer(target, voteWolves, alpha);
+                                    }
+                                    else
+                                    {
+                                        target.KilledByRole = IRole.Wolf;
+                                        target.IsDead = true;
+                                        target.TimeDied = DateTime.Now;
+                                        target.DiedLastNight = true;
+                                        JokerDead = true;
+                                        DBKill(voteWolves, target, KillMthd.Eat);
+                                        SendGif(GetLocaleString("WolvesEatYou"),
+                                            DbGroup.EnableLangPackGif != true ? (GetRandomImage(Settings.VillagerDieImages)) : DbGameGif.VillagerDieImages, target.Id);
+                                    }
+                                    break;
                                 default:
                                     if (bitten)
                                     {
@@ -3131,6 +3348,8 @@ namespace Werewolf_Node
                         DBKill(sk, skilled, KillMthd.SerialKilled);
                         if (WolfRoles.Contains(skilled.PlayerRole))
                             sk.SerialKilledWolvesCount++;
+                        if (skilled.PlayerRole == IRole.Joker)
+                            JokerDead = true;
                         SendGif(GetLocaleString("SKKilledYou"),
                             DbGroup.EnableLangPackGif != true ? (GetRandomImage(Settings.VillagerDieBySK)) : DbGameGif.VillagerDieBySK, skilled.Id);
 
@@ -4145,6 +4364,23 @@ namespace Werewolf_Node
                         }
                     }
                 }
+                var joker = Players.FirstOrDefault(x => x.PlayerRole == IRole.Joker);
+                if (joker != null && joker.IsDead)
+                {
+                    joker.Won = true;
+                    var dp = GetDBGamePlayer(joker, db);
+                    dp.Won = true;
+                    if (joker.InLove)
+                    {
+                        //find lover
+                        var lover = Players.FirstOrDefault(x => x.Id == joker.LoverId);
+                        if (lover != null)
+                        {
+                            lover.Won = true;
+                            GetDBGamePlayer(lover, db).Won = true;
+                        }
+                    }
+                }
                 switch (team)
                 {
                     case ITeam.NoOne:
@@ -4928,7 +5164,7 @@ namespace Werewolf_Node
         }
         #endregion
 
-        #region Database Helpers
+        #region Database Helpersno
 
         // ReSharper disable UnusedParameter.Local
         private void DBAction(IPlayer initator, IPlayer receiver, string action)
