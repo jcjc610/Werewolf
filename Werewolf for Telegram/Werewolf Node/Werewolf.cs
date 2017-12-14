@@ -2731,7 +2731,7 @@ namespace Werewolf_Node
             Send(GetLocaleString("JokerKilled"));
             var newPlayers = Players;
             // var newAlivePlayers = newPlayers.Where(x => !x.IsDead).ToList();
-            List<IRole> newRoles = Players.Select(x => x.PlayerRole).ToList();
+            List<IRole> newRoles = newPlayers.Where(x => !x.IsDead).Select(x => x.PlayerRole).ToList();
             newRoles.Shuffle();
             newRoles.Shuffle();
             Stack<IRole> newRolesStack = new Stack<IRole>(newRoles);
