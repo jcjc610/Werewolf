@@ -2731,6 +2731,30 @@ namespace Werewolf_Node
             CheckRoleChanges();
         }
 
+        private void RemovePlayerDetails(List<IPlayer> players)
+        {
+            foreach (IPlayer p in players)
+            {
+                p.AlphaConvertCount = 0;
+                p.Bullet = 0;
+                p.BulletHitVillager = false;
+                p.BusyNight = false;
+                p.CHHuntedCultCount = 0;
+                p.ClumsyCorrectLynchCount = 0;
+                p.CorrectSnooped = null;
+                p.DayCult = 0;
+                p.FoolCorrectSeeCount = 0;
+                p.GAGuardWolfCount = 0;
+                p.HasDayAction = false;
+                p.HasNightAction = false;
+                p.HasRepeatedVisit = false;
+                p.HasStayedHome = false;
+                p.HasUsedAbility = false;
+                p.MayorLynchAfterRevealCount = 0;
+                p.PlayersVisited = null;
+                p.SerialKilledWolvesCount = 0;
+            }
+        }
 
         private void JokerFun()
         {
@@ -2739,7 +2763,9 @@ namespace Werewolf_Node
             if (CheckForGameEnd(true)) return;
             if (!JokerDead) return;
             Send(GetLocaleString("JokerKilled"));
+            RemovePlayerDetails(Players);
             var newPlayers = Players;
+            List<IPlayer> tempPlayers = Players.ToList();
             // var newAlivePlayers = newPlayers.Where(x => !x.IsDead).ToList();
             List<IRole> newRoles = newPlayers.Where(x => !x.IsDead).Select(x => x.PlayerRole).ToList();
             newRoles.Shuffle();
@@ -2749,6 +2775,7 @@ namespace Werewolf_Node
             {
                 p.PlayerRole = newRolesStack.Pop();
                 p.ChangedRolesCount++;
+                var oldP = tempPlayers.FirstOrDefault(x => x.Id == p.Id);
                 switch (p.PlayerRole)
                 {
                     case IRole.Villager:
@@ -2759,19 +2786,68 @@ namespace Werewolf_Node
                     case IRole.Traitor:
                     case IRole.Mason:
                     case IRole.Hunter:
-                    case IRole.Mayor:
-                    case IRole.ClumsyGuy:
                     case IRole.Prince:
+                        if (oldP.PlayerRole == IRole.Mayor)
+                            p.HasUsedAbility = oldP.HasUsedAbility;
+                         p.HasDayAction = false;
+                        p.HasNightAction = false;
+                        p.Team = ITeam.Village;
+                        break;
                     case IRole.Cupid:
                         p.HasDayAction = false;
                         p.HasNightAction = false;
                         p.Team = ITeam.Village;
                         break;
-                    case IRole.Fool:
-                    case IRole.Harlot:
+                    case IRole.Mayor:
+                        if (oldP.PlayerRole == IRole.Mayor)
+                        {
+                            p.MayorLynchAfterRevealCount = oldP.MayorLynchAfterRevealCount;
+                            p.HasUsedAbility = oldP.HasUsedAbility;
+                        }
+                        p.HasDayAction = false;
+                        p.HasNightAction = false;
+                        p.Team = ITeam.Village;
+                        break;
+                    case IRole.ClumsyGuy:
+                        if (oldP.PlayerRole == IRole.ClumsyGuy)
+                            p.ClumsyCorrectLynchCount = oldP.ClumsyCorrectLynchCount;
+                        p.HasDayAction = false;
+                        p.HasNightAction = false;
+                        p.Team = ITeam.Village;
+                        break;
                     case IRole.CultistHunter:
-                    case IRole.Seer:
+                        if (oldP.PlayerRole == IRole.CultistHunter)
+                            p.CHHuntedCultCount = oldP.CHHuntedCultCount;
+                        p.Team = ITeam.Village;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
+                    case IRole.Fool:
+                        if (oldP.PlayerRole == IRole.Fool)
+                            p.FoolCorrectSeeCount = oldP.FoolCorrectSeeCount;
+                        p.Team = ITeam.Village;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
                     case IRole.GuardianAngel:
+                        if (oldP.PlayerRole == IRole.GuardianAngel)
+                            p.GAGuardWolfCount = oldP.GAGuardWolfCount;
+                        p.Team = ITeam.Village;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
+                    case IRole.Harlot:
+                        if (oldP.PlayerRole == IRole.Harlot)
+                        {
+                            p.HasRepeatedVisit = oldP.HasRepeatedVisit;
+                            p.HasStayedHome = oldP.HasStayedHome;
+                            p.PlayersVisited = oldP.PlayersVisited;
+                        }
+                        p.Team = ITeam.Village;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
+                    case IRole.Seer:
                     case IRole.Blacksmith:
                         p.Team = ITeam.Village;
                         p.HasNightAction = true;
@@ -2781,42 +2857,68 @@ namespace Werewolf_Node
                         p.Team = ITeam.Village;
                         p.HasNightAction = true;
                         p.HasDayAction = false;
-                        if (Players.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel == p.Id)
+                        if (tempPlayers.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel == p.Id)
                         {
-                            var lst = Players.Where(x => !x.IsDead && x.Id != p.Id).ToList();
+                            var lst = tempPlayers.Where(x => !x.IsDead && x.Id != p.Id).ToList();
                             lst.Shuffle();
                             p.RoleModel = lst[0].Id;
                         }
                         else
-                            p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel;
+                            p.RoleModel = tempPlayers.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel;
                         break;
                     case IRole.Doppelgänger:
                         p.Team = ITeam.Neutral;
                         p.HasNightAction = true;
                         p.HasDayAction = false;
-                        if (Players.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel == p.Id)
+                        if (tempPlayers.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel == p.Id)
                         {
-                            var lst = Players.Where(x => !x.IsDead && x.Id != p.Id).ToList();
+                            var lst = tempPlayers.Where(x => !x.IsDead && x.Id != p.Id).ToList();
                             lst.Shuffle();
                             p.RoleModel = lst[0].Id;
                         }
                         else
-                            p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel;
+                            p.RoleModel = tempPlayers.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel;
                         break;
                     case IRole.Detective:
+                        if (oldP.PlayerRole == IRole.Detective)
+                            p.CorrectSnooped = oldP.CorrectSnooped;
                         p.Team = ITeam.Village;
                         p.HasDayAction = true;
                         p.HasNightAction = false;
                         break;
                     case IRole.Gunner:
+                        if (oldP.PlayerRole == IRole.Gunner)
+                        {
+                            p.Bullet = oldP.Bullet;
+                            p.BulletHitVillager = oldP.BulletHitVillager;
+                            p.HasUsedAbility = oldP.HasUsedAbility;
+                        }
+                        else
+                            p.Bullet = oldP.Bullet > 0 ? oldP.Bullet : 1;
                         p.Team = ITeam.Village;
                         p.HasDayAction = true;
                         p.HasNightAction = false;
-                        p.Bullet = 2;
+                        break;
+                    case IRole.AlphaWolf:
+                        if (oldP.PlayerRole == IRole.AlphaWolf)
+                        {
+                            p.AlphaConvertCount = oldP.AlphaConvertCount;
+                            p.Drunk = oldP.Drunk;
+                        }
+                        p.Team = ITeam.Wolf;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
                         break;
                     case IRole.Sorcerer:
-                    case IRole.AlphaWolf:
+                        p.Team = ITeam.Wolf;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
                     case IRole.WolfCub:
+                        p.Team = ITeam.Wolf;
+                        p.HasNightAction = true;
+                        p.HasDayAction = false;
+                        break;
                     case IRole.Wolf:
                         p.Team = ITeam.Wolf;
                         p.HasNightAction = true;
@@ -2828,17 +2930,21 @@ namespace Werewolf_Node
                         p.HasNightAction = false;
                         break;
                     case IRole.Cultist:
+                        if (oldP.PlayerRole == IRole.Cultist)
+                            p.DayCult = oldP.DayCult;
                         p.HasDayAction = false;
                         p.HasNightAction = true;
                         p.Team = ITeam.Cult;
                         break;
                     case IRole.SerialKiller:
+                        if (oldP.PlayerRole == IRole.SerialKiller)
+                            p.SerialKilledWolvesCount = oldP.SerialKilledWolvesCount;
                         p.HasNightAction = true;
                         p.HasDayAction = false;
                         p.Team = ITeam.SerialKiller;
                         break;
                     case IRole.Confused:
-                        p.HiddenConfusedRole = Players.FirstOrDefault(x => x.PlayerRole == IRole.Confused).HiddenConfusedRole;
+                        p.HiddenConfusedRole = tempPlayers.FirstOrDefault(x => x.PlayerRole == IRole.Confused).HiddenConfusedRole;
                         switch (p.HiddenConfusedRole)
                         {
                             case IRole.Villager:
