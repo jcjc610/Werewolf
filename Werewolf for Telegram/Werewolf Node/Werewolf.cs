@@ -2741,7 +2741,7 @@ namespace Werewolf_Node
                 p.BusyNight = false;
                 p.CHHuntedCultCount = 0;
                 p.ClumsyCorrectLynchCount = 0;
-                p.CorrectSnooped = null;
+                p.CorrectSnooped = new List<int>();
                 p.DayCult = 0;
                 p.FoolCorrectSeeCount = 0;
                 p.GAGuardWolfCount = 0;
@@ -2751,7 +2751,7 @@ namespace Werewolf_Node
                 p.HasStayedHome = false;
                 p.HasUsedAbility = false;
                 p.MayorLynchAfterRevealCount = 0;
-                p.PlayersVisited = null;
+                p.PlayersVisited = new HashSet<int>();
                 p.SerialKilledWolvesCount = 0;
             }
         }
