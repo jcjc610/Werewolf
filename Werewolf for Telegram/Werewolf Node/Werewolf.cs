@@ -1532,11 +1532,20 @@ namespace Werewolf_Node
             foreach (var p in (!JokerHadFun) ? Players.ToList() : Players.Where(x => !x.IsDead).ToList())
             {
                 if (p?.PlayerRole == null) continue;
-                var msg = "";
+                var msg = GetLocaleString("JokerKilledPMNewRole");
+                if (JokerHadFun)
+                    msg += "";
                 if (p.PlayerRole != IRole.Confused)
                     msg = GetRoleInfo(p.PlayerRole);
                 else
                     msg = GetRoleInfo(p.PlayerRole, p);
+                if (JokerHadFun)
+                {
+                    if (p.PlayerRole == IRole.WildChild || (p.PlayerRole == IRole.Confused && p.HiddenConfusedRole == IRole.WildChild))
+                        Send(GetLocaleString("NewWCRoleModel", Players.FirstOrDefault(x => x.Id == p.RoleModel)?.GetName() ?? "None was chosen!"), p.Id);
+                    if (p.PlayerRole == IRole.Doppelgänger || (p.PlayerRole == IRole.Confused && p.HiddenConfusedRole == IRole.Doppelgänger))
+                        Send(GetLocaleString("NewDGRoleModel", Players.FirstOrDefault(x => x.Id == p.RoleModel)?.GetName() ?? "None was chosen!"), p.Id);
+                }
                 try
                 {
                     // ReSharper disable once UnusedVariable
@@ -2772,13 +2781,27 @@ namespace Werewolf_Node
                         p.Team = ITeam.Village;
                         p.HasNightAction = true;
                         p.HasDayAction = false;
-                        p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel;
+                        if (Players.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel == p.Id)
+                        {
+                            var lst = Players.Where(x => !x.IsDead && x.Id != p.Id).ToList();
+                            lst.Shuffle();
+                            p.RoleModel = lst[0].Id;
+                        }
+                        else
+                            p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.WildChild).RoleModel;
                         break;
                     case IRole.Doppelgänger:
                         p.Team = ITeam.Neutral;
                         p.HasNightAction = true;
                         p.HasDayAction = false;
-                        p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel;
+                        if (Players.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel == p.Id)
+                        {
+                            var lst = Players.Where(x => !x.IsDead && x.Id != p.Id).ToList();
+                            lst.Shuffle();
+                            p.RoleModel = lst[0].Id;
+                        }
+                        else
+                            p.RoleModel = Players.FirstOrDefault(x => x.PlayerRole == IRole.Doppelgänger).RoleModel;
                         break;
                     case IRole.Detective:
                         p.Team = ITeam.Village;
@@ -4366,7 +4389,8 @@ namespace Werewolf_Node
                     }
                 }
                 var joker = Players.FirstOrDefault(x => x.PlayerRole == IRole.Joker);
-                if (joker != null && joker.IsDead)
+                var wolfAndSK = new List<IRole> { IRole.Wolf, IRole.WolfCub, IRole.AlphaWolf, IRole.SerialKiller };
+                if (joker != null && joker.IsDead && wolfAndSK.Contains(joker.KilledByRole))
                 {
                     joker.Won = true;
                     var dp = GetDBGamePlayer(joker, db);
